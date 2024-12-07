@@ -2,12 +2,12 @@ import React, { useState, useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faForward,
-  faChartBar,
+  faTachometerAlt,
   faWrench,
   faKey,
-  faCrosshairs,
+ 
   faSignOutAlt,
-  faMapMarkedAlt
+ 
 } from "@fortawesome/free-solid-svg-icons";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../../image/C1.png";
@@ -44,7 +44,7 @@ const SideMenu = () => {
   };
 
   const menuItems = [
-    { title: "Dashboard", icon: faChartBar, to: "/dashboard", key: "dashboard" },
+    { title: "Dashboard", icon: faTachometerAlt, to: "/dashboard", key: "dashboard" },
      { title: "Setup Wizard", icon: faWrench, to: "/setup", key: "setup" },
     { title: "Change Password", icon: faKey, to: "/password-change", key: "setup" },
   ];

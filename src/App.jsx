@@ -25,6 +25,7 @@ import Access from "./components/Admin/Access";
 import Employee from "./components/Admin/Employee";
 import Login from "./components/Login/Login";
 import Dashboard from "./components/Dashboard/Dashboard";
+import Mmu from "./components/Mmu/Mmu";
 import ChangePass from "./components/Login/Change_pass";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -124,17 +125,14 @@ function App() {
                       <>
                           <Route path="/dashboard" element={<Dashboard />} />
                         <Route
-                          path="/inventory/:group"
-                          element={<AssetType />}
+                          path="/dashboard/:mmu"
+                          element={<Mmu />}
                         />
-                        <Route
+                        {/* <Route
                           path="/inventory/:group/:type"
                           element={<TypeTable />}
-                        />
-                        <Route
-                          path="/inventory/:group/:type/:tag"
-                          element={<SingleAsset />}
-                        />
+                        /> */}
+                       
                       </>
                     )}
 
@@ -149,4 +147,25 @@ function App() {
                         <Route path="/Setup/states" element={<State />} />
                         <Route path="/Setup/divisions" element={<Division />} />
                         <Route path="/Setup/products" element={<Product />} />
-                
+                        <Route path="/Setup/aop" element={<Aop />} />
+                        <Route path="/Setup/employee" element={<Employee />} />
+                      
+                      </>
+                    )}
+                  </Routes>
+                </TicketProvider>
+              </div>
+            </div>
+          </>
+        ) : (
+          <Routes>
+            <Route path="*" element={<Login onLogin={handleLogin} />} />
+            <Route path="password-change" element={<ChangePass />} />
+          </Routes>
+        )}
+      </div>
+    </Router>
+  );
+}
+
+export default App;
