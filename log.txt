@@ -1,0 +1,258 @@
+2024-07-12 15:41:50,167 - ERROR - Main program error: HTTPConnectionPool(host='3.111.173.44', port=80): Max retries exceeded with url: /asset.php (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x000001E7362C2300>, 'Connection to 3.111.173.44 timed out. (connect timeout=None)'))
+Traceback (most recent call last):
+  File "C:\Program Files\Python312\Lib\site-packages\urllib3\connection.py", line 203, in _new_conn
+    sock = connection.create_connection(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\urllib3\util\connection.py", line 85, in create_connection
+    raise err
+  File "C:\Program Files\Python312\Lib\site-packages\urllib3\util\connection.py", line 73, in create_connection
+    sock.connect(sa)
+TimeoutError: [WinError 10060] A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Program Files\Python312\Lib\site-packages\urllib3\connectionpool.py", line 790, in urlopen
+    response = self._make_request(
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\urllib3\connectionpool.py", line 496, in _make_request
+    conn.request(
+  File "C:\Program Files\Python312\Lib\site-packages\urllib3\connection.py", line 395, in request
+    self.endheaders()
+  File "C:\Program Files\Python312\Lib\http\client.py", line 1331, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "C:\Program Files\Python312\Lib\http\client.py", line 1091, in _send_output
+    self.send(msg)
+  File "C:\Program Files\Python312\Lib\http\client.py", line 1035, in send
+    self.connect()
+  File "C:\Program Files\Python312\Lib\site-packages\urllib3\connection.py", line 243, in connect
+    self.sock = self._new_conn()
+                ^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\urllib3\connection.py", line 212, in _new_conn
+    raise ConnectTimeoutError(
+urllib3.exceptions.ConnectTimeoutError: (<urllib3.connection.HTTPConnection object at 0x000001E7362C2300>, 'Connection to 3.111.173.44 timed out. (connect timeout=None)')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Program Files\Python312\Lib\site-packages\requests\adapters.py", line 486, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\urllib3\connectionpool.py", line 844, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\urllib3\util\retry.py", line 515, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='3.111.173.44', port=80): Max retries exceeded with url: /asset.php (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x000001E7362C2300>, 'Connection to 3.111.173.44 timed out. (connect timeout=None)'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "d:\download\qbss\new-agent.py", line 382, in <module>
+    response = requests.post(url, json=data)  # Send data as JSON
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\requests\api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\requests\adapters.py", line 507, in send
+    raise ConnectTimeout(e, request=request)
+requests.exceptions.ConnectTimeout: HTTPConnectionPool(host='3.111.173.44', port=80): Max retries exceeded with url: /asset.php (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x000001E7362C2300>, 'Connection to 3.111.173.44 timed out. (connect timeout=None)'))
+2024-08-09 17:40:00,992 - ERROR - Error fetching temperature info: <x_wmi: Unexpected COM Error (-2147217394, 'OLE error 0x8004100e', None, None)>
+Traceback (most recent call last):
+  File "C:\Program Files\Python312\Lib\site-packages\wmi.py", line 1340, in connect
+    obj = GetObject(moniker)
+          ^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\win32com\client\__init__.py", line 86, in GetObject
+    return Moniker(Pathname, clsctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\win32com\client\__init__.py", line 103, in Moniker
+    moniker, i, bindCtx = pythoncom.MkParseDisplayName(Pathname)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pywintypes.com_error: (-2147217394, 'OLE error 0x8004100e', None, None)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "d:\download\qbss\final\new-agent.py", line 261, in <module>
+    c = wmi.WMI(namespace="root\OpenHardwareMonitor")
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\wmi.py", line 1354, in connect
+    handle_com_error()
+  File "C:\Program Files\Python312\Lib\site-packages\wmi.py", line 258, in handle_com_error
+    raise klass(com_error=err)
+wmi.x_wmi: <x_wmi: Unexpected COM Error (-2147217394, 'OLE error 0x8004100e', None, None)>
+2024-08-09 17:40:04,854 - ERROR - Error in final data submission: 'serial_number'
+Traceback (most recent call last):
+  File "d:\download\qbss\final\new-agent.py", line 430, in <module>
+    'serial_number': data['serial_number'],
+                     ~~~~^^^^^^^^^^^^^^^^^
+KeyError: 'serial_number'
+2024-08-09 17:43:04,428 - ERROR - Error fetching temperature info: <x_wmi: Unexpected COM Error (-2147217394, 'OLE error 0x8004100e', None, None)>
+Traceback (most recent call last):
+  File "C:\Program Files\Python312\Lib\site-packages\wmi.py", line 1340, in connect
+    obj = GetObject(moniker)
+          ^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\win32com\client\__init__.py", line 86, in GetObject
+    return Moniker(Pathname, clsctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\win32com\client\__init__.py", line 103, in Moniker
+    moniker, i, bindCtx = pythoncom.MkParseDisplayName(Pathname)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pywintypes.com_error: (-2147217394, 'OLE error 0x8004100e', None, None)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "d:\download\qbss\final\new-agent.py", line 261, in <module>
+    c = wmi.WMI(namespace="root\OpenHardwareMonitor")
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\wmi.py", line 1354, in connect
+    handle_com_error()
+  File "C:\Program Files\Python312\Lib\site-packages\wmi.py", line 258, in handle_com_error
+    raise klass(com_error=err)
+wmi.x_wmi: <x_wmi: Unexpected COM Error (-2147217394, 'OLE error 0x8004100e', None, None)>
+2024-08-09 17:43:07,320 - ERROR - Error in final data submission: 'serial_number'
+Traceback (most recent call last):
+  File "d:\download\qbss\final\new-agent.py", line 430, in <module>
+    'serial_number': data['serial_number'],
+                     ~~~~^^^^^^^^^^^^^^^^^
+KeyError: 'serial_number'
+2024-08-09 17:43:45,296 - ERROR - Error fetching temperature info: <x_wmi: Unexpected COM Error (-2147217394, 'OLE error 0x8004100e', None, None)>
+Traceback (most recent call last):
+  File "C:\Program Files\Python312\Lib\site-packages\wmi.py", line 1340, in connect
+    obj = GetObject(moniker)
+          ^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\win32com\client\__init__.py", line 86, in GetObject
+    return Moniker(Pathname, clsctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\win32com\client\__init__.py", line 103, in Moniker
+    moniker, i, bindCtx = pythoncom.MkParseDisplayName(Pathname)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pywintypes.com_error: (-2147217394, 'OLE error 0x8004100e', None, None)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "d:\download\qbss\final\new-agent.py", line 261, in <module>
+    c = wmi.WMI(namespace=r"root\OpenHardwareMonitor")
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\wmi.py", line 1354, in connect
+    handle_com_error()
+  File "C:\Program Files\Python312\Lib\site-packages\wmi.py", line 258, in handle_com_error
+    raise klass(com_error=err)
+wmi.x_wmi: <x_wmi: Unexpected COM Error (-2147217394, 'OLE error 0x8004100e', None, None)>
+2024-08-09 17:43:47,973 - ERROR - Error in final data submission: 'serial_number'
+Traceback (most recent call last):
+  File "d:\download\qbss\final\new-agent.py", line 430, in <module>
+    'serial_number': data['serial_number'],
+                     ~~~~^^^^^^^^^^^^^^^^^
+KeyError: 'serial_number'
+2024-08-09 22:19:51,039 - ERROR - Error fetching temperature info: <x_wmi: Unexpected COM Error (-2147217394, 'OLE error 0x8004100e', None, None)>
+Traceback (most recent call last):
+  File "C:\Program Files\Python312\Lib\site-packages\wmi.py", line 1340, in connect
+    obj = GetObject(moniker)
+          ^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\win32com\client\__init__.py", line 86, in GetObject
+    return Moniker(Pathname, clsctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\win32com\client\__init__.py", line 103, in Moniker
+    moniker, i, bindCtx = pythoncom.MkParseDisplayName(Pathname)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pywintypes.com_error: (-2147217394, 'OLE error 0x8004100e', None, None)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "d:\download\qbss\final\new-agent.py", line 261, in <module>
+    c = wmi.WMI(namespace=r"root\OpenHardwareMonitor")
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\wmi.py", line 1354, in connect
+    handle_com_error()
+  File "C:\Program Files\Python312\Lib\site-packages\wmi.py", line 258, in handle_com_error
+    raise klass(com_error=err)
+wmi.x_wmi: <x_wmi: Unexpected COM Error (-2147217394, 'OLE error 0x8004100e', None, None)>
+2024-08-10 09:26:59,940 - ERROR - Error in final data submission: 'serial_number'
+Traceback (most recent call last):
+  File "d:\download\qbss\final\new-agent.py", line 430, in <module>
+    'serial_number': data['serial_number'],
+                     ~~~~^^^^^^^^^^^^^^^^^
+KeyError: 'serial_number'
+2024-10-17 15:30:48,484 - ERROR - Main program error: HTTPConnectionPool(host='210.18.179.82', port=90): Max retries exceeded with url: /db/asset.php (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001BD63CD5F40>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+Traceback (most recent call last):
+  File "C:\Program Files\Python312\Lib\site-packages\urllib3\connection.py", line 203, in _new_conn
+    sock = connection.create_connection(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\urllib3\util\connection.py", line 85, in create_connection
+    raise err
+  File "C:\Program Files\Python312\Lib\site-packages\urllib3\util\connection.py", line 73, in create_connection
+    sock.connect(sa)
+ConnectionRefusedError: [WinError 10061] No connection could be made because the target machine actively refused it
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Program Files\Python312\Lib\site-packages\urllib3\connectionpool.py", line 790, in urlopen
+    response = self._make_request(
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\urllib3\connectionpool.py", line 496, in _make_request
+    conn.request(
+  File "C:\Program Files\Python312\Lib\site-packages\urllib3\connection.py", line 395, in request
+    self.endheaders()
+  File "C:\Program Files\Python312\Lib\http\client.py", line 1331, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "C:\Program Files\Python312\Lib\http\client.py", line 1091, in _send_output
+    self.send(msg)
+  File "C:\Program Files\Python312\Lib\http\client.py", line 1035, in send
+    self.connect()
+  File "C:\Program Files\Python312\Lib\site-packages\urllib3\connection.py", line 243, in connect
+    self.sock = self._new_conn()
+                ^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\urllib3\connection.py", line 218, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x000001BD63CD5F40>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Program Files\Python312\Lib\site-packages\requests\adapters.py", line 486, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\urllib3\connectionpool.py", line 844, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\urllib3\util\retry.py", line 515, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='210.18.179.82', port=90): Max retries exceeded with url: /db/asset.php (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001BD63CD5F40>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "d:\download\qbss\final\new-agent.py", line 531, in <module>
+    response = requests.post(url, json=data)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\requests\api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\requests\adapters.py", line 519, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='210.18.179.82', port=90): Max retries exceeded with url: /db/asset.php (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001BD63CD5F40>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
