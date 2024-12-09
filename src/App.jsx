@@ -33,6 +33,7 @@ import { UserContext } from "../src/components/UserContext/UserContext";
 import { TicketProvider } from "../src/components/UserContext/TicketContext";
 import SideMenu from "./components/sideMenu/SideMenu";
 import Setup from "./components/Setup/Setup";
+import MmuDashboard from "./components/Mmu/MMUDashBoard/MmuDashboard";
 const INACTIVITY_TIMEOUT = 60 * 60 * 1000; // 1 hour
 
 function App() {
@@ -128,6 +129,11 @@ function App() {
                           path="/dashboard/:mmu"
                           element={<Mmu />}
                         />
+                        <Route
+                          path="/dashboard/mmudashboard"
+                          element={<MmuDashboard />}
+                        />
+
                         {/* <Route
                           path="/inventory/:group/:type"
                           element={<TypeTable />}

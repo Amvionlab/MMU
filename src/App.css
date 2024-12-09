@@ -88,3 +88,6 @@
 .ticket-scroll::-webkit-scrollbar-thumb:hover {
   background: #555555; /* Color when hovered */
 }
+.custom-cell {
+  padding: 2px 2px !important;
+}
