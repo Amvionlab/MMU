@@ -346,7 +346,9 @@ function EPrescibeSoftware() {
           className={`p-2 bg-slate-300 rounded-lg cursor-pointer capitalize ${
             selectedTable == "rows" && "bg-slate-600 text-white"
           }`}
-          onClick={() => setSelectedTable("rows")}
+          onClick={() => {
+            setSelectedTable("rows"), setTitle("Medicine Report");
+          }}
         >
           Button1
         </p>
