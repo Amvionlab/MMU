@@ -10,8 +10,8 @@ import {
  
 } from "@fortawesome/free-solid-svg-icons";
 import { Link, useLocation } from "react-router-dom";
-import logo from "../../image/C1.png";
-import sampatName from "../../image/C2.png";
+import logo from "../../image/redcrossicon.jpg";
+import sampatName from "../../image/redcrosslogo.jpg";
 import { UserContext } from "../UserContext/UserContext";
 
 import { Tooltip, tooltipClasses } from "@mui/material";
@@ -74,7 +74,7 @@ const SideMenu = () => {
                   <img
                     src={sampatName}
                     alt="Sampat Name"
-                    style={{ minWidth: "140px", height: "50px", justifyItems: "center"}}
+                    style={{ minWidth: "120px", height: "37px", justifyItems: "center"}}
                   />
                 ) : (
                   <img
@@ -82,7 +82,7 @@ const SideMenu = () => {
                     width="40px"
                     height="50px"
                     alt="Logo"
-                    style={{ minWidth: "40px", minHeight: "50px" }}
+                    style={{ minWidth: "40px", minHeight: "37px" }}
                   />
                 )}
               </Link>
