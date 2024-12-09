@@ -7,6 +7,7 @@ import { BiCctv } from "react-icons/bi";
 import { FaFingerprint } from "react-icons/fa6";
 import { MdOutlineGpsFixed } from "react-icons/md";
 import { MdNoteAlt } from "react-icons/md";
+import { Link } from 'react-router-dom';
 
 function MMU() {
   return (
@@ -100,13 +101,14 @@ function MMU() {
                 </div>
               
               </div>
-
+            <Link to="/dashboard/mmudashboard">
               <div className='bg-white w-full min-h-80 flex justify-center items-center rounded-md shadow-md'>
                 <div>
               <FaFingerprint size={80}/>
                <h2 className='font-semibold mt-4'>Bio - Metric</h2>
               </div>
               </div>
+              </Link>
               <div className='bg-white w-full min-h-80 flex justify-center items-center rounded-md shadow-md'>
                 <div>
               <MdOutlineGpsFixed size={80}/>
