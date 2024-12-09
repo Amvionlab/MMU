@@ -72,10 +72,10 @@ function Dashboard() {
             <p className="p-1 text-xs bg-white text-gray-900 rounded-3xl cursor-pointer">
               To be viewed
             </p>
-            <Link to = "/dashboard/mmu">
-            <p className="p-1 text-xs bg-red-700 text-white cursor-pointer">
-              View Details
-            </p>
+            <Link to="/dashboard/mmu">
+              <p className="p-1 text-xs bg-red-700 text-white cursor-pointer">
+                View Details
+              </p>
             </Link>
           </div>
         </div>

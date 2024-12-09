@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 import { FaFilter } from "react-icons/fa";
 import { PiDotsThreeOutlineThin } from "react-icons/pi";
 import { VscSettings } from "react-icons/vsc";
@@ -7,18 +7,18 @@ import { BiCctv } from "react-icons/bi";
 import { FaFingerprint } from "react-icons/fa6";
 import { MdOutlineGpsFixed } from "react-icons/md";
 import { MdNoteAlt } from "react-icons/md";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 function MMU() {
   return (
-    <main className='p-4 bg-white h-full'>
-        <section>
-            <div>
-                <h1 className='font-semibold text-2xl'>MMU-1</h1>
-            </div>
-        </section>
+    <main className="p-4 bg-white h-full">
+      <section>
+        <div>
+          <h1 className="font-semibold text-2xl">MMU-1</h1>
+        </div>
+      </section>
 
-        {/* <section>
+      {/* <section>
           <div className='mt-4 grid grid-cols-2 gap-2'>
             <div className='flex gap-2'>
         <form class="form relative">
@@ -89,43 +89,45 @@ function MMU() {
 </div>
         </section> */}
 
-        <section className='mt-8 border border-gray-200 p-4 rounded-sm'>
-          <h2 className='flex items-center gap-4 font-semibold text-xl mt-8'><MdSpaceDashboard size={24}/>Dashboard</h2>
+      <section className="mt-8 border border-gray-200 p-4 rounded-sm">
+        <h2 className="flex items-center gap-4 font-semibold text-xl mt-8">
+          <MdSpaceDashboard size={24} />
+          Dashboard
+        </h2>
 
-          <div className='grid grid-cols-4 gap-4 mt-8'>
-
-              <div className='bg-white w-full min-h-80 flex justify-center items-center rounded-md shadow-md'>
-                <div className=''>
-                  <BiCctv size={100}/>
-                  <h2 className='font-semibold mt-4'>IP Surveillance</h2>
-                </div>
-              
-              </div>
-            <Link to="/dashboard/mmudashboard">
-              <div className='bg-white w-full min-h-80 flex justify-center items-center rounded-md shadow-md'>
-                <div>
-              <FaFingerprint size={80}/>
-               <h2 className='font-semibold mt-4'>Bio - Metric</h2>
-              </div>
-              </div>
-              </Link>
-              <div className='bg-white w-full min-h-80 flex justify-center items-center rounded-md shadow-md'>
-                <div>
-              <MdOutlineGpsFixed size={80}/>
-              <h2 className='font-semibold mt-4 text-center'>GPS</h2>
-              </div>
-              </div>
-                 <div className='bg-white w-full min-h-80 flex justify-center items-center rounded-md shadow-md'>
-                  <div className=''>
-                 <MdNoteAlt size={80} className='ml-8'/>
-                 <h2 className='font-semibold mt-4'>E-Presribing Software</h2>
-                 </div>
-                 </div>
+        <div className="grid grid-cols-4 gap-4 mt-8">
+          <div className="bg-white w-full min-h-80 flex justify-center items-center rounded-md shadow-md">
+            <div className="">
+              <BiCctv size={100} />
+              <h2 className="font-semibold mt-4">IP Surveillance</h2>
+            </div>
           </div>
-
-        </section>
+          <Link to="/dashboard/mmudashboard">
+            <div className="bg-white w-full min-h-80 flex justify-center items-center rounded-md shadow-md">
+              <div>
+                <FaFingerprint size={80} />
+                <h2 className="font-semibold mt-4">Bio - Metric</h2>
+              </div>
+            </div>
+          </Link>
+          <div className="bg-white w-full min-h-80 flex justify-center items-center rounded-md shadow-md">
+            <div>
+              <MdOutlineGpsFixed size={80} />
+              <h2 className="font-semibold mt-4 text-center">GPS</h2>
+            </div>
+          </div>
+          <Link to="/eprescribe/eprescribe">
+            <div className="bg-white w-full min-h-80 flex justify-center items-center rounded-md shadow-md">
+              <div className="">
+                <MdNoteAlt size={80} className="ml-8" />
+                <h2 className="font-semibold mt-4">E-Presribing Software</h2>
+              </div>
+            </div>
+          </Link>
+        </div>
+      </section>
     </main>
-  )
+  );
 }
 
-export default MMU
+export default MMU;
