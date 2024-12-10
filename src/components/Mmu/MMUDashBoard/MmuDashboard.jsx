@@ -3,10 +3,9 @@ import { CiExport, CiFilter } from "react-icons/ci";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
+import { FaFingerprint } from "react-icons/fa6";
 import Checkbox from '@mui/material/Checkbox';
 import TablePagination from '@mui/material/TablePagination';
 
@@ -20,12 +19,13 @@ const rows = [
   { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
   { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
   { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
+  { id: 10, lastName: 'Rasdoxie', firstName: 'Harvadsey', age: 95 },
 ];
 
 function MmuDashboard() {
   const [selectedRows, setSelectedRows] = useState([]);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   // Handle selecting/deselecting individual rows
   const handleRowSelect = (id) => {
@@ -63,29 +63,27 @@ function MmuDashboard() {
   );
 
   return (
-    <main className="bg-white h-full">
-      <section>
-        <div className="flex justify-between items-center p-10">
-          <div>
-            <h2 className="font-semibold text-2xl">Bio Metric</h2>
-          </div>
+    <main className="bg-second h-full p-0.5">
+      <div className="bg-box py-2 px-5 mb-0.5 h-[12%]">
+      <h2 className="flex text-prime gap-5 items-center text-xl font-bold mt-3">
+      <FaFingerprint size={40} />Bio Metric
+      </h2>
+      </div>
+
+      <div className="bg-white h-[88%]  p-5">
+
+      <div className="flex justify-between items-center">
           <div className="flex justify-center items-center gap-4">
-            <button className="flex justify-center items-center text-sm rounded-sm bg-gray-100 p-2 font-semibold">
+            <button className="flex justify-center items-center text-xs rounded hover:rounded-full hover:border-red-200 hover:border bg-second p-2 font-semibold">
               <CiExport /> Export
             </button>
-            <button className="flex justify-center items-center text-sm rounded-sm bg-gray-100 p-2 font-semibold">
+            <button className="flex justify-center items-center text-xs rounded hover:rounded-full hover:border-red-200 hover:border bg-second p-2 font-semibold">
               <CiFilter /> Filter
             </button>
-            <button className="rounded-md bg-gray-400 text-sm p-2 font-semibold">
-              + Add User
-            </button>
+            
           </div>
-        </div>
-      </section>
-
-      <section>
-      <TablePagination
-          rowsPerPageOptions={[5, 10, 15]}
+          <TablePagination
+          rowsPerPageOptions={[10, 25, 50]}
           component="div"
           count={rows.length}
           rowsPerPage={rowsPerPage}
@@ -93,19 +91,13 @@ function MmuDashboard() {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
+        </div>
+     
         
-          <Table sx={{ minWidth: 650, '& .MuiTableCell-root': { padding: '4px' } }} aria-label="simple table" className='mt-4'>
+          <Table sx={{ minWidth: 650, '& .MuiTableCell-root': { padding: '10px',textAlign: 'center' } }} aria-label="simple table" className='mt-2 text-center'>
             <TableHead>
               <TableRow>
-                <TableCell>
-                  <Checkbox
-                    indeterminate={
-                      selectedRows.length > 0 && selectedRows.length < rows.length
-                    }
-                    checked={selectedRows.length === rows.length}
-                    onChange={handleSelectAll}
-                  />
-                </TableCell>
+                
                 <TableCell style={{fontWeight:"600", fontSize: "1rem"}}>ID</TableCell>
                 <TableCell style={{fontWeight:"600", fontSize: "1rem"}}>First Name</TableCell>
                 <TableCell style={{fontWeight:"600", fontSize: "1rem"}}>Last Name</TableCell>
@@ -116,12 +108,7 @@ function MmuDashboard() {
             <TableBody>
               {displayedRows.map((row) => (
                 <TableRow key={row.id}>
-                  <TableCell>
-                    <Checkbox
-                      checked={selectedRows.includes(row.id)}
-                      onChange={() => handleRowSelect(row.id)}
-                    />
-                  </TableCell>
+                 
                   <TableCell>{row.id}</TableCell>
                   <TableCell>{row.firstName || 'N/A'}</TableCell>
                   <TableCell>{row.lastName || 'N/A'}</TableCell>
@@ -135,7 +122,7 @@ function MmuDashboard() {
 
         {/* Pagination */}
        
-      </section>
+      </div>
     </main>
   );
 }
