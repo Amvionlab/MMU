@@ -66,10 +66,10 @@ const Login = ({ onLogin }) => {
               </div>
               <div className="col-lg-12 whole-login mt-4">
                 <div className='form-background'>
-                  <label htmlFor="username" className="text-flo text-sm font-medium">Username</label>
+                  <label htmlFor="username" className="text-black text-sm font-medium">Username</label>
                   <br />
                   <div className="input-container">
-                    <FontAwesomeIcon icon={faUser} className="input-icon  text-flo"  />
+                    <FontAwesomeIcon icon={faUser} className="input-icon  text-black"  />
                     <input
                       type="email"
                       placeholder="Your Email"
@@ -77,21 +77,21 @@ const Login = ({ onLogin }) => {
                       name="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="input-login mt-2 border-none placeholder:text-prime text-flo font-medium placeholder:text-xs"
+                      className="input-login mt-2 border-none placeholder:text-prime text-black font-medium placeholder:text-xs"
                       autoComplete="off"
                     />
                   </div>
                   <br />
-                  <label htmlFor="password" className="text-flo text-sm font-medium">Password</label>
+                  <label htmlFor="password" className="text-black text-sm font-medium">Password</label>
                   <br />
                   <div className="input-container">
-                    <FontAwesomeIcon icon={faLock} className="input-icon text-flo" />
+                    <FontAwesomeIcon icon={faLock} className="input-icon text-black" />
                     <input
                       type="password"
                       placeholder="Your Password"
                       id="password"
                       name="password"
-                      className="input-login mt-2 border-none placeholder:text-prime  text-flo font-medium  placeholder:text-xs"
+                      className="input-login mt-2 border-none placeholder:text-prime  text-black font-medium  placeholder:text-xs"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       autoComplete="off"
@@ -102,19 +102,19 @@ const Login = ({ onLogin }) => {
   name="remember"
   id="remember"
   defaultChecked={true}
-  className='mt-4 mb-2 ml-2 text-flo text-sm'
+  className='mt-4 mb-2 ml-2 text-black text-sm'
 />
-<label htmlFor="remember" className="text-flo text-xs font-medium">
+<label htmlFor="remember" className="text-black text-xs font-medium">
   <span>&nbsp;&nbsp;Remember Me</span>
 </label> <br /><br />
                   <div className='text-center'>
-                    <input type="submit" onClick={handleLogin} className="submit text-sm border-login text-box bg-flo" />
+                    <input type="submit" onClick={handleLogin} className="submit text-sm border-login font-semibold hover:text-black text-black hover:shadow-md bg-flo" />
                   </div> <br />
                   {message && <p className="text-red-500 mt-4 text-center">{message}</p>}
                 </div>
               </div>
             </div>
-            <footer className='footer text-flo text-sm font-normal'>
+            <footer className='footer text-black text-sm font-normal'>
               <h6>&#169;2024 Amvion Labs Private Limited . All Rights Reserved</h6>
             </footer>
           </div>

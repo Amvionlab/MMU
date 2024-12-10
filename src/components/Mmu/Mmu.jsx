@@ -73,7 +73,7 @@ function MMU() {
             <div className="bg-red-100 flex justify-center items-center rounded-md shadow-md hover:bg-red-200 hover:shadow-xl h-full">
               <div className="text-center">
                 <MdNoteAlt size={80} />
-                <h2 className="font-semibold mt-4">E-Prescribing Software</h2>
+                <h2 className="font-semibold mt-4">E-Prescribing</h2>
               </div>
             </div>
           </Link>
