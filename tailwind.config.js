@@ -35,7 +35,7 @@ export default {
         bgBlack: "#1F1F1F",
         name: "#B1B1B1",
         flo: "#106674",
-        prime: "#01ab86",
+        prime: "#d70008",
         second: "#ebeef5",
         box: "#ffffff",
         label: "#172554",

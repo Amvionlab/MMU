@@ -1,0 +1,46 @@
+Medicine Report - Patient Wise :
+{
+    "code": 200,
+    "details": {
+        "returnValue": [
+            [
+                {
+                    "medicineId": "588cde69-2597-4d9f-ae4c-08db93ec9620",
+                    "medicineName": "Amiline 10mg Tablet",
+                    "medicineCategory": "TABLETS",
+                    "billId": "717",
+                    "billDate": "2024-12-07T05:03:36.843",
+                    "patientName": "Ram",
+                    "doctorName": "GOLA SWAIN",
+                    "batchNo": "28",
+                    "qty": 2,
+                    "costRate": 2.5,
+                    "sellrate": 5.5,
+                    "subTotal": 11,
+                    "counterDet": "Sales Location  Chromepet",
+                    "branchName": "Dr Abdul"
+                }
+            ],
+            [
+                {
+                    "medicineId": "a8f39786-516d-4e15-26aa-08db101459e0",
+                    "medicineName": "Dolo tablets 650",
+                    "medicineCategory": "TABLETS",
+                    "billId": "717",
+                    "billDate": "2024-12-07T05:03:36.843",
+                    "patientName": "Ram",
+                    "doctorName": "GOLA SWAIN",
+                    "batchNo": "25",
+                    "qty": 3,
+                    "costRate": 5,
+                    "sellrate": 5,
+                    "subTotal": 15,
+                    "counterDet": "Sales Location  Chromepet",
+                    "branchName": "Dr Abdul"
+                }
+            ]
+        ],
+        "count": 2
+    },
+    "message": "success"
+}
