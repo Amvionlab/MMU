@@ -123,7 +123,7 @@ const SideMenu = () => {
                 // Render only the Link without tooltip when expanded
                 <Link
                   to="#"
-                  className="flex items-center gap-2 p-3 m-1 mt-8 text-white rounded-lg transition-all duration-500 ease-in-out hover:bg-white hover:text-purple-500"
+                  className="flex items-center gap-2 p-3 m-1 mt-32 text-white rounded-lg transition-all duration-500 ease-in-out hover:bg-white hover:text-purple-500"
                   onClick={() => setIsExpanded(prev => !prev)}
                 >
                   <FontAwesomeIcon
@@ -148,7 +148,7 @@ const SideMenu = () => {
                 >
                   <Link
                     to="#"
-                    className="flex items-center gap-2 p-3 m-1 mt-8 whitespace-nowrap text-white rounded-lg transition-all duration-500 ease-in-out hover:bg-white hover:text-purple-500"
+                    className="flex items-center gap-2 p-3 m-1 mt-32 whitespace-nowrap text-white rounded-lg transition-all duration-500 ease-in-out hover:bg-white hover:text-purple-500"
                     onClick={() => setIsExpanded(prev => !prev)}
                   >
                     <FontAwesomeIcon

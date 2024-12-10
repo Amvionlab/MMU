@@ -56,35 +56,35 @@ function Dashboard() {
   ];
 
   return (
-    <main className="bg-white font-poppins p-4">
-      <h2 className="flex gap-4 items-center text-2xl font-semibold mt-8">
+    <main className="bg-second font-poppins p-0.5 gap-0.5 h-full">
+      <div className="bg-box p-2 mb-0.5 h-[12%]">
+      <h2 className="flex text-prime gap-4 items-center text-xl font-bold mt-4">
         <RiDashboardHorizontalLine />
         MMU Dashboard
       </h2>
-      <div className="h-full w-full px-10 pt-10 pb-10 bg-white grid grid-cols-2 gap-3">
+      </div>
+      <div className="h-[88%] w-full p-6 bg-white grid grid-cols-2 gap-y-6 gap-x-8">
         {data.map((val, i) => (
           <div
             key={i}
-            className="bg-red-100 p-4 flex justify-between rounded-sm"
+            className="bg-red-100 hover:bg-red-200 p-5 flex justify-between rounded-full shadow-sm hover:shadow-md"
           >
             {/* Left Section */}
-            <div className="flex h-fit items-start gap-2 ">
+            <div className="flex h-fit items-start gap-5 ">
               <p className="text-sm font-bold">{val.title}</p>
               <p className="self-stretch w-[2px] bg-gray-700"></p>
               <div className="flex flex-col gap-1 ">
                 <p className="text-sm font-semibold">{val.unit}</p>
-                <p className="text-sm font-light">{val.doctorName}</p>
-                <p className="text-sm font-light">{val.location}</p>
+                <p className="text-sm font-normal">{val.doctorName}</p>
+                <p className="text-sm font-normal">{val.location}</p>
               </div>
             </div>
             {/* Right Section */}
-            <div className="flex flex-col gap-2 items-center">
-              <p className="p-2 text-xs bg-white text-gray-900 rounded-3xl cursor-pointer">
-                To be viewed
-              </p>
-              <Link to="/dashboard/mmu">
-                <p className="p-2 text-xs bg-red-700 text-white cursor-pointer">
-                  View Details
+            <div className="flex flex-col gap-2 items-center justify-center">
+              
+            <Link to={`/dashboard/mmu/${i+1}`}>
+                <p className="p-2 text-xs bg-red-600 hover:bg-box font-bold shadow-sm hover:shadow hover:text-prime text-box cursor-pointer rounded-full">
+                  View
                 </p>
               </Link>
             </div>

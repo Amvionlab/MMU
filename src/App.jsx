@@ -129,7 +129,7 @@ function App() {
                       <>
                           <Route path="/dashboard" element={<Dashboard />} />
                         <Route
-                          path="/dashboard/:mmu"
+                          path="/dashboard/mmu/:mmu"
                           element={<Mmu />}
                         />
                         <Route
