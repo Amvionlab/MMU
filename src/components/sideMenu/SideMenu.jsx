@@ -10,7 +10,7 @@ import {
  
 } from "@fortawesome/free-solid-svg-icons";
 import { Link, useLocation } from "react-router-dom";
-import logo from "../../image/redcrossicon.jpg";
+import logo from "../../image/redcrossicon.png";
 import sampatName from "../../image/redcrosslogo.jpg";
 import { UserContext } from "../UserContext/UserContext";
 
