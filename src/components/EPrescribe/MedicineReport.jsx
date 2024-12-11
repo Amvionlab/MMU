@@ -5,6 +5,7 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TablePagination from '@mui/material/TablePagination';
+import { CiExport } from "react-icons/ci";
 
 const MedicineReport = () => {
   const [selectedBranch, setSelectedBranch] = useState("");
@@ -13,7 +14,6 @@ const MedicineReport = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [data, setData] = useState([]);
 
-  // Initialize dates to current date in UTC
   const today = new Date();
   const initialFromDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), 0, 0, 0));
   const initialToDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), 23, 59, 59));
@@ -23,7 +23,6 @@ const MedicineReport = () => {
 
   const url = "https://ez-hms-dev-app-ser.azurewebsites.net/api/MyReports/SalesProductwiseList";
 
-  // Fetch data from API
   useEffect(() => {
     const fetchData = async () => {
       const payload = {
@@ -59,7 +58,6 @@ const MedicineReport = () => {
   );
   const displayedData = filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
-  // Function to format the bill date
   const formatBillDate = (dateString) => {
     if (!dateString) return "N/A";
     const date = new Date(dateString);
@@ -73,10 +71,46 @@ const MedicineReport = () => {
     }).format(date);
   };
 
+  const exportToCSV = () => {
+    const csvRows = [];
+
+    // Define the headers
+    const headers = [
+      "Patient Name",
+      "Doctor Name",
+      "Drug Name",
+      "Category",
+      "Quantity",
+      "Bill Date",
+    ];
+    csvRows.push(headers.join(','));
+
+    // Add data rows
+    data.forEach(row => {
+      const values = [
+        row.patientName || "N/A",
+        row.doctorName || "N/A",
+        row.medicineName || "N/A",
+        row.medicineCategory || "N/A",
+        row.qty || "N/A",
+        formatBillDate(row.billDate),
+      ];
+      csvRows.push(values.map(value => `"${value}"`).join(','));
+    });
+
+    // Create a Blob from the CSV string
+    const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.setAttribute('href', url);
+    a.setAttribute('download', 'medicine_report.csv');
+    a.click();
+  };
+
   return (
-  <div className="bg-box h-auto">
-      <div className="flex items-center justify-between  bg-box border-b text-xs">
-        <div className="flex items-center space-x-4  bg-box">
+    <div className="bg-box h-auto">
+      <div className="flex items-center justify-between bg-box border-b text-xs">
+        <div className="flex items-center space-x-4 bg-box">
           <div className="flex items-center">
             <label className="font-semibold text-red-600">From Date:</label>
             <input
@@ -88,7 +122,6 @@ const MedicineReport = () => {
           </div>
 
           <div className="flex items-center">
-         
             <label className="font-semibold text-red-600">To Date:</label>
             <input
               type="date"
@@ -121,9 +154,12 @@ const MedicineReport = () => {
             />
           </div>
         </div>
-        <button className="flex justify-center items-center text-xs hover:shadow-md rounded-full border-red-200 border bg-second p-1 font-semibold">
-            <CiExport className="mr-1" /> Export
-          </button>
+        <button
+          onClick={exportToCSV}
+          className="flex justify-center items-center text-xs hover:shadow-md rounded-full border-red-200 border bg-second p-1 font-semibold"
+        >
+          <CiExport className="mr-1" /> Export
+        </button>
         <TablePagination
           rowsPerPageOptions={[10, 25, 50]}
           component="div"
@@ -151,10 +187,11 @@ const MedicineReport = () => {
           }}
         />
       </div>
-      
+
       <Table sx={{ minWidth: 650 }} aria-label="Medicine Report" className="mt-2 h-full bg-box">
         <TableHead>
           <TableRow>
+          <TableCell style={{ fontWeight: "600", fontSize: "14px", padding: "10px" }}>S.No</TableCell>
             <TableCell style={{ fontWeight: "600", fontSize: "14px", padding: "10px" }}>Patient Name</TableCell>
             <TableCell style={{ fontWeight: "600", fontSize: "14px", padding: "10px" }}>Doctor Name</TableCell>
             <TableCell style={{ fontWeight: "600", fontSize: "14px", padding: "10px" }}>Drug Name</TableCell>
@@ -166,6 +203,7 @@ const MedicineReport = () => {
         <TableBody>
           {displayedData.map((row, index) => (
             <TableRow key={index}>
+              <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>{(index+1)+(page*rowsPerPage)}</TableCell>
               <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>{row.patientName || "N/A"}</TableCell>
               <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>{row.doctorName || "N/A"}</TableCell>
               <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>{row.medicineName || "N/A"}</TableCell>
@@ -176,7 +214,7 @@ const MedicineReport = () => {
           ))}
         </TableBody>
       </Table>
-</div>
+    </div>
   );
 };
 
