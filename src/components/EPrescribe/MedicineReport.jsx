@@ -10,7 +10,7 @@ const MedicineReport = () => {
   const [selectedBranch, setSelectedBranch] = useState("");
   const [selectedMedicineName, setSelectedMedicineName] = useState("");
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [data, setData] = useState([]);
 
   // Initialize dates to current date in UTC
@@ -32,7 +32,7 @@ const MedicineReport = () => {
         TenantId: "6bced242-032d-47d6-e7cb-08d8f2bf3f35",
         BranchId: "82b28344-d04e-41a0-6465-08d8f2bf3fc3"
       };
-      console.log(payload)
+      console.log(payload);
 
       try {
         const response = await fetch(url, {
@@ -59,108 +59,121 @@ const MedicineReport = () => {
   );
   const displayedData = filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
+  // Function to format the bill date
+  const formatBillDate = (dateString) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true
+    }).format(date);
+  };
+
   return (
-    <>
-      <div className="flex items-center justify-between  border-b text-xs">
-  <div className="flex items-center space-x-4">
-    <div className="flex items-center">
-      <label className="font-semibold text-red-600">From Date:</label>
-      <input
-        type="date"
-        value={fromDate}
-        onChange={e => setFromDate(e.target.value)}
-        className="border px-1 ml-2"
-      />
-    </div>
+  <div className="bg-box h-auto">
+      <div className="flex items-center justify-between  bg-box border-b text-xs">
+        <div className="flex items-center space-x-4  bg-box">
+          <div className="flex items-center">
+            <label className="font-semibold text-red-600">From Date:</label>
+            <input
+              type="date"
+              value={fromDate}
+              onChange={e => setFromDate(e.target.value)}
+              className="border px-1 ml-2"
+            />
+          </div>
 
-    <div className="flex items-center">
-      <label className="font-semibold text-red-600">To Date:</label>
-      <input
-        type="date"
-        value={toDate}
-        onChange={e => setToDate(e.target.value)}
-        className="border px-1 ml-2"
-      />
-    </div>
+          <div className="flex items-center">
+            <label className="font-semibold text-red-600">To Date:</label>
+            <input
+              type="date"
+              value={toDate}
+              onChange={e => setToDate(e.target.value)}
+              className="border px-1 ml-2"
+            />
+          </div>
 
-    <div className="flex items-center">
-      <label className="font-semibold text-red-600">Branch:</label>
-      <select
-        onChange={e => setSelectedBranch(e.target.value)}
-        className="border px-1 ml-2"
-      >
-        <option value="">All</option>
-        {[...new Set(data.map(row => row.branchName))].map(branch => (
-          <option key={branch} value={branch}>{branch}</option>
-        ))}
-      </select>
-    </div>
+          <div className="flex items-center">
+            <label className="font-semibold text-red-600">Branch:</label>
+            <select
+              onChange={e => setSelectedBranch(e.target.value)}
+              className="border px-1 ml-2"
+            >
+              <option value="">All</option>
+              {[...new Set(data.map(row => row.branchName))].map(branch => (
+                <option key={branch} value={branch}>{branch}</option>
+              ))}
+            </select>
+          </div>
 
-    <div className="flex items-center">
-      <label className="font-semibold text-red-600">Drug:</label>
-      <input
-        type="text"
-        onChange={e => setSelectedMedicineName(e.target.value)}
-        placeholder="Enter Drug"
-        className="border px-1 ml-2"
-      />
-    </div>
-  </div>
+          <div className="flex items-center">
+            <label className="font-semibold text-red-600">Drug:</label>
+            <input
+              type="text"
+              onChange={e => setSelectedMedicineName(e.target.value)}
+              placeholder="Enter Drug"
+              className="border px-1 ml-2"
+            />
+          </div>
+        </div>
 
-  <TablePagination
-    rowsPerPageOptions={[5, 10, 15]}
-    component="div"
-    count={filteredData.length}
-    rowsPerPage={rowsPerPage}
-    page={page}
-    onPageChange={(event, newPage) => setPage(newPage)}
-    onRowsPerPageChange={event => {
-      setRowsPerPage(parseInt(event.target.value, 10));
-      setPage(0);
-    }}
-    sx={{
-        '& .MuiTablePagination-toolbar': {
-          fontSize: '11px',
-          fontWeight: 700,
-        },
-        '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows': {
-          fontSize: '11px',
-          fontWeight: 700,
-        },
-        '& .MuiTablePagination-select, & .MuiTablePagination-actions': {
-          fontSize: '11px',
-          fontWeight: 700,
-        },
-      }}
-  />
-</div>
+        <TablePagination
+          rowsPerPageOptions={[10, 25, 50]}
+          component="div"
+          count={filteredData.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={(event, newPage) => setPage(newPage)}
+          onRowsPerPageChange={event => {
+            setRowsPerPage(parseInt(event.target.value, 10));
+            setPage(0);
+          }}
+          sx={{
+            '& .MuiTablePagination-toolbar': {
+              fontSize: '11px',
+              fontWeight: 700,
+            },
+            '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows': {
+              fontSize: '11px',
+              fontWeight: 700,
+            },
+            '& .MuiTablePagination-select, & .MuiTablePagination-actions': {
+              fontSize: '11px',
+              fontWeight: 700,
+            },
+          }}
+        />
+      </div>
       
-      <Table sx={{ minWidth: 650 }} aria-label="Medicine Report" className="mt-2">
+      <Table sx={{ minWidth: 650 }} aria-label="Medicine Report" className="mt-2 h-full bg-box">
         <TableHead>
           <TableRow>
-            <TableCell style={{ fontWeight: "600", fontSize: "14px" , padding: "10px"}}>Patient Name</TableCell>
-            <TableCell style={{ fontWeight: "600", fontSize: "14px" , padding: "10px"}}>Doctor Name</TableCell>
-            <TableCell style={{ fontWeight: "600", fontSize: "14px" , padding: "10px"}}>Drug Name</TableCell>
-            <TableCell style={{ fontWeight: "600", fontSize: "14px" , padding: "10px"}}>Category</TableCell>
-            <TableCell style={{ fontWeight: "600", fontSize: "14px" , padding: "10px"}}>Quantity</TableCell>
-            <TableCell style={{ fontWeight: "600", fontSize: "14px" , padding: "10px"}}>Bill Date</TableCell>
-
+            <TableCell style={{ fontWeight: "600", fontSize: "14px", padding: "10px" }}>Patient Name</TableCell>
+            <TableCell style={{ fontWeight: "600", fontSize: "14px", padding: "10px" }}>Doctor Name</TableCell>
+            <TableCell style={{ fontWeight: "600", fontSize: "14px", padding: "10px" }}>Drug Name</TableCell>
+            <TableCell style={{ fontWeight: "600", fontSize: "14px", padding: "10px" }}>Category</TableCell>
+            <TableCell style={{ fontWeight: "600", fontSize: "14px", padding: "10px" }}>Quantity</TableCell>
+            <TableCell style={{ fontWeight: "600", fontSize: "14px", padding: "10px" }}>Bill Date</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {displayedData.map((row, index) => (
             <TableRow key={index}>
-              <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "8px" }}>{row.patientName || "N/A"}</TableCell>
-              <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "8px" }}>{row.doctorName || "N/A"}</TableCell>
-              <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "8px" }}>{row.medicineName || "N/A"}</TableCell>
-              <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "8px" }}>{row.medicineCategory || "N/A"}</TableCell>
-              <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "8px" }}>{row.qty || "N/A"}</TableCell>
-              <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "8px" }}>{row.billDate || "N/A"}</TableCell>
+              <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>{row.patientName || "N/A"}</TableCell>
+              <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>{row.doctorName || "N/A"}</TableCell>
+              <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>{row.medicineName || "N/A"}</TableCell>
+              <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>{row.medicineCategory || "N/A"}</TableCell>
+              <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>{row.qty || "N/A"}</TableCell>
+              <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>{formatBillDate(row.billDate)}</TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-    </>
+</div>
   );
 };
 
