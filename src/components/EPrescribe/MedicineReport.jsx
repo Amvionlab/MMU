@@ -88,6 +88,7 @@ const MedicineReport = () => {
           </div>
 
           <div className="flex items-center">
+         
             <label className="font-semibold text-red-600">To Date:</label>
             <input
               type="date"
@@ -120,7 +121,9 @@ const MedicineReport = () => {
             />
           </div>
         </div>
-
+        <button className="flex justify-center items-center text-xs hover:shadow-md rounded-full border-red-200 border bg-second p-1 font-semibold">
+            <CiExport className="mr-1" /> Export
+          </button>
         <TablePagination
           rowsPerPageOptions={[10, 25, 50]}
           component="div"
