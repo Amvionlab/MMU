@@ -1,32 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { CiExport, CiFilter } from "react-icons/ci";
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Checkbox from '@mui/material/Checkbox';
-import TablePagination from '@mui/material/TablePagination';
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import { FaFingerprint } from "react-icons/fa6";
+import Checkbox from "@mui/material/Checkbox";
+import TablePagination from "@mui/material/TablePagination";
+import useFetch from "../../../hooks/useFetch";
 
 const rows = [
-  { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-  { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-  { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-  { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-  { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-  { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-  { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-  { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-  { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
+  { id: 1, lastName: "Snow", firstName: "Jon", age: 35 },
+  { id: 2, lastName: "Lannister", firstName: "Cersei", age: 42 },
+  { id: 3, lastName: "Lannister", firstName: "Jaime", age: 45 },
+  { id: 4, lastName: "Stark", firstName: "Arya", age: 16 },
+  { id: 5, lastName: "Targaryen", firstName: "Daenerys", age: null },
+  { id: 6, lastName: "Melisandre", firstName: null, age: 150 },
+  { id: 7, lastName: "Clifford", firstName: "Ferrara", age: 44 },
+  { id: 8, lastName: "Frances", firstName: "Rossini", age: 36 },
+  { id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 },
+  { id: 10, lastName: "Rasdoxie", firstName: "Harvadsey", age: 95 },
+];
+const headers = [
+  "id",
+  "employee_id",
+  "employee_name",
+  "check_in_time",
+  "check_out_time",
+  "date",
+  "department",
 ];
 
 function MmuDashboard() {
   const [selectedRows, setSelectedRows] = useState([]);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const { allData } = useFetch("http://localhost/MMU/backend/fetchbio.php");
+  console.log(allData);
   // Handle selecting/deselecting individual rows
   const handleRowSelect = (id) => {
     setSelectedRows((prevSelected) =>
@@ -57,85 +68,82 @@ function MmuDashboard() {
   };
 
   // Calculate displayed rows
-  const displayedRows = rows.slice(
+  const displayedRows = allData.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
 
   return (
-    <main className="bg-white h-full">
-      <section>
-        <div className="flex justify-between items-center p-10">
-          <div>
-            <h2 className="font-semibold text-2xl">Bio Metric</h2>
-          </div>
+    <main className="bg-second h-full p-0.5">
+      <div className="bg-box py-2 px-5 mb-0.5 h-[12%]">
+        <h2 className="flex text-prime gap-5 items-center text-xl font-bold mt-3">
+          <FaFingerprint size={40} />
+          Bio Metric
+        </h2>
+      </div>
+
+      <div className="bg-white h-[88%]  p-5">
+        <div className="flex justify-between items-center">
           <div className="flex justify-center items-center gap-4">
-            <button className="flex justify-center items-center text-sm rounded-sm bg-gray-100 p-2 font-semibold">
+            <button className="flex justify-center items-center text-xs rounded hover:rounded-full hover:border-red-200 hover:border bg-second p-2 font-semibold">
               <CiExport /> Export
             </button>
-            <button className="flex justify-center items-center text-sm rounded-sm bg-gray-100 p-2 font-semibold">
+            <button className="flex justify-center items-center text-xs rounded hover:rounded-full hover:border-red-200 hover:border bg-second p-2 font-semibold">
               <CiFilter /> Filter
             </button>
-            <button className="rounded-md bg-gray-400 text-sm p-2 font-semibold">
-              + Add User
-            </button>
           </div>
+          <TablePagination
+            rowsPerPageOptions={[10, 25, 50]}
+            component="div"
+            count={allData.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
         </div>
-      </section>
 
-      <section>
-      <TablePagination
-          rowsPerPageOptions={[5, 10, 15]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-        
-          <Table sx={{ minWidth: 650, '& .MuiTableCell-root': { padding: '4px' } }} aria-label="simple table" className='mt-4'>
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  <Checkbox
-                    indeterminate={
-                      selectedRows.length > 0 && selectedRows.length < rows.length
-                    }
-                    checked={selectedRows.length === rows.length}
-                    onChange={handleSelectAll}
-                  />
+        <Table
+          sx={{
+            minWidth: 650,
+            "& .MuiTableCell-root": { padding: "10px", textAlign: "center" },
+          }}
+          aria-label="simple table"
+          className="mt-2 text-center"
+        >
+          <TableHead>
+            <TableRow>
+              {headers.map((data, i) => (
+                <TableCell
+                  key={i}
+                  style={{ fontWeight: "600", fontSize: "1rem" }}
+                >
+                  {data}
                 </TableCell>
-                <TableCell style={{fontWeight:"600", fontSize: "1rem"}}>ID</TableCell>
-                <TableCell style={{fontWeight:"600", fontSize: "1rem"}}>First Name</TableCell>
-                <TableCell style={{fontWeight:"600", fontSize: "1rem"}}>Last Name</TableCell>
-                <TableCell style={{fontWeight:"600", fontSize: "1rem"}}>Age</TableCell>
-                <TableCell style={{fontWeight:"600", fontSize: "1rem"}}>Full Name</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {displayedRows.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell>
-                    <Checkbox
-                      checked={selectedRows.includes(row.id)}
-                      onChange={() => handleRowSelect(row.id)}
-                    />
-                  </TableCell>
-                  <TableCell>{row.id}</TableCell>
-                  <TableCell>{row.firstName || 'N/A'}</TableCell>
-                  <TableCell>{row.lastName || 'N/A'}</TableCell>
-                  <TableCell>{row.age !== null ? row.age : 'N/A'}</TableCell>
-                  <TableCell>{`${row.firstName || ''} ${row.lastName || ''}`.trim()}</TableCell>
-                </TableRow>
               ))}
-            </TableBody>
-          </Table>
-        
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {allData.map((data, i) => (
+              <TableRow key={i}>
+                {Object.values(data).map((val, idx) => (
+                  <TableCell
+                    key={idx}
+                    align="center"
+                    size="10px"
+                    className="border"
+                    sx={{ fontSize: "12px", transform: "capitalize" }}
+                  >
+                    {val || "N/A"}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
 
         {/* Pagination */}
-       
-      </section>
+      </div>
     </main>
   );
 }
