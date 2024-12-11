@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CiExport, CiFilter } from "react-icons/ci";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -34,10 +34,12 @@ const headers = [
 
 function MmuDashboard() {
   const [selectedRows, setSelectedRows] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [page, setPage] = useState(0);
+  const [date, setDate] = useState({ fromDate: "", endDate: "" });
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const { allData } = useFetch("http://localhost/MMU/backend/fetchbio.php");
-  console.log(allData);
+  // console.log(allData);
   // Handle selecting/deselecting individual rows
   const handleRowSelect = (id) => {
     setSelectedRows((prevSelected) =>
@@ -73,6 +75,21 @@ function MmuDashboard() {
     page * rowsPerPage + rowsPerPage
   );
 
+  useEffect(() => {
+    if (date.endDate || date.fromDate) {
+      const filter = allData.filter((data) => {
+        const dataDate = data.date;
+        const start = date.fromDate || "1900-01-01";
+        const end = date.endDate || "2100-01-01";
+        return dataDate >= start && dataDate <= end;
+      });
+
+      setFilteredData(filter);
+    } else {
+      setFilteredData(allData);
+    }
+  }, [date.endDate, date.fromDate, allData]);
+
   return (
     <main className="bg-second h-full p-0.5">
       <div className="bg-box py-2 px-5 mb-0.5 h-[12%]">
@@ -91,6 +108,28 @@ function MmuDashboard() {
             <button className="flex justify-center items-center text-xs rounded hover:rounded-full hover:border-red-200 hover:border bg-second p-2 font-semibold">
               <CiFilter /> Filter
             </button>
+            <div className="flex items-center gap-2">
+              <p className="font-medium">FromDate</p>
+              <input
+                type="date"
+                value={date.fromDate}
+                className="border rounded-md border-black p-1"
+                onChange={(e) =>
+                  setDate((prev) => ({ ...prev, fromDate: e.target.value }))
+                }
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <p className="font-medium">EndDate</p>
+              <input
+                type="date"
+                value={date.endDate}
+                onChange={(e) =>
+                  setDate((prev) => ({ ...prev, endDate: e.target.value }))
+                }
+                className="border rounded-md border-black p-1"
+              />
+            </div>
           </div>
           <TablePagination
             rowsPerPageOptions={[10, 25, 50]}
@@ -106,7 +145,13 @@ function MmuDashboard() {
         <Table
           sx={{
             minWidth: 650,
-            "& .MuiTableCell-root": { padding: "10px", textAlign: "center" },
+            "& .MuiTableCell-root": {
+              padding: "10px",
+              textAlign: "center",
+              textTransform: "capitalize", // Capitalize text
+              border: "1px solid #ddd", // Add border
+              boxShadow: "1px 1px 1px ",
+            },
           }}
           aria-label="simple table"
           className="mt-2 text-center"
@@ -124,7 +169,7 @@ function MmuDashboard() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {allData.map((data, i) => (
+            {filteredData.map((data, i) => (
               <TableRow key={i}>
                 {Object.values(data).map((val, idx) => (
                   <TableCell
