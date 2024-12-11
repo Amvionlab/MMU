@@ -10,15 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@emotion/react": "^11.13.5",
-    "@emotion/styled": "^11.13.5",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@mui/icons-material": "^5.16.9",
     "@mui/material": "^5.16.9",
     "@mui/x-charts": "^7.12.1",
-    "@mui/x-date-pickers": "^7.23.0",
+    "@mui/x-date-pickers": "^7.23.1",
     "ag-grid-community": "^32.3.2",
     "ag-grid-react": "^32.3.2",
     "axios": "^1.7.2",
