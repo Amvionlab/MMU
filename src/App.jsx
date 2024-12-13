@@ -1,185 +1,59 @@
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-  useContext,
-} from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-  useNavigate,
-} from "react-router-dom";
-import "./App.css";
+import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
 
-import User from "./components/Admin/User";
-import Location from "./components/Admin/Location";
-import Territory from "./components/Admin/Territory";
-import State from "./components/Admin/State";
-import Division from "./components/Admin/Division";
-import Product from "./components/Admin/Product";
-import Aop from "./components/Admin/Aop";
-import Access from "./components/Admin/Access";
-import Employee from "./components/Admin/Employee";
-import Login from "./components/Login/Login";
-import Dashboard from "./components/Dashboard/Dashboard";
-import Mmu from "./components/Mmu/Mmu";
-import ChangePass from "./components/Login/Change_pass";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { UserContext } from "../src/components/UserContext/UserContext";
-import { TicketProvider } from "../src/components/UserContext/TicketContext";
-import SideMenu from "./components/sideMenu/SideMenu";
-import Setup from "./components/Setup/Setup";
-import MmuDashboard from "./components/Mmu/MMUDashBoard/MmuDashboard";
-import EPrescibeSoftware from "./components/EPrescribe/EPrescibeSoftware";
-
-
-const INACTIVITY_TIMEOUT = 60 * 60 * 1000; // 1 hour
-
-function App() {
-  const { user, setUser } = useContext(UserContext);
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    localStorage.getItem("isAuthenticated") === "true"
-  );
-  const [open, setOpen] = useState(false);
-  const timeoutIdRef = useRef(null);
-
-  const resetTimeout = useCallback(() => {
-    if (timeoutIdRef.current) {
-      clearTimeout(timeoutIdRef.current);
-    }
-
-    timeoutIdRef.current = setTimeout(() => {
-      setIsAuthenticated(false);
-      localStorage.removeItem("isAuthenticated");
-      localStorage.removeItem("user");
-      window.location.href = "/login";
-    }, INACTIVITY_TIMEOUT);
-  }, []);
+const App = () => {
+  const [vehicles, setVehicles] = useState([]);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      localStorage.setItem("isAuthenticated", "true");
-      resetTimeout();
-
-      const events = [
-        "mousemove",
-        "mousedown",
-        "keypress",
-        "scroll",
-        "touchstart",
-      ];
-      const resetUserTimeout = () => resetTimeout();
-
-      events.forEach((event) =>
-        window.addEventListener(event, resetUserTimeout)
-      );
-
-      return () => {
-        events.forEach((event) =>
-          window.removeEventListener(event, resetUserTimeout)
-        );
-        if (timeoutIdRef.current) {
-          clearTimeout(timeoutIdRef.current);
+    const fetchData = async () => {
+      try {
+        const response = await fetch('https://app.fleettrack.co.in/api/get_current_data?token=karunakaran_24iqi2T21dq2Ud1Kb9g0CPaUCo1lLzml&email=karunakaran1307@gmail.com');
+        const data = await response.json();
+        
+        // Ensure data is an array
+        if (Array.isArray(data)) {
+          setVehicles(data);
+        } else {
+          console.error('Expected an array from the API', data);
         }
-      };
-    } else {
-      localStorage.removeItem("isAuthenticated");
-      localStorage.removeItem("user");
-    }
-  }, [isAuthenticated, resetTimeout, setUser]);
+      } catch (error) {
+        console.error('Error fetching the data:', error);
+      }
+    };
 
-  const handleLogin = () => {
-    setIsAuthenticated(true);
-    toast.success("Logged in successfully!");
-  };
+    fetchData();
+    const interval = setInterval(fetchData, 30000); // Fetch data every 30 seconds
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <Router>
-      <div className="App bg-second font-sui">
-        <ToastContainer />
-        {isAuthenticated ? (
-          <>
-            <div className="main-content flex overflow-y-hidden">
-              <SideMenu />
-              <div className="flex-1 md:overflow-y-auto h-screen">
-                <TicketProvider>
-                  <Routes>
-                    <Route path="/password-change" element={<ChangePass />} />
-
-                    {user && user.setup === "1" && (
-                      <>
-                        <Route path="*" element={<Navigate to="/setup" />} />
-                        
-                      </>
-                    )}
-                    {user && user.setup === "0" && (
-                      <>
-                        <Route path="*" element={<Navigate to="/dashboard" />} />
-                       
-                      </>
-                    )}
-
-{user && user.setup === "1" && (
-                   
-                 
-                      <>
-                          <Route path="/dashboard" element={<Dashboard />} />
-                        <Route
-                          path="/dashboard/mmu/:mmu"
-                          element={<Mmu />}
-                        />
-                        <Route
-                          path="/dashboard/mmudashboard"
-                          element={<MmuDashboard />}
-                        />
-                        <Route
-                          path="/eprescribe/eprescribe"
-                          element={<EPrescibeSoftware />}
-                        />
-                       
-                   
-                        {/* <Route
-                          path="/inventory/:group/:type"
-                          element={<TypeTable />}
-                        /> */}
-                       
-                      </>
-                    )}
-
-                    {user && user.setup === "1" && (
-                      <>
-                        <Route path="/setup/user" element={<User />} />
-                        
-                        <Route path="/setup/access" element={<Access />} />
-                        <Route path="/setup" element={<Setup />} />
-                        <Route path="/Setup/zones" element={<Location />} />
-                        <Route path="/Setup/territories" element={<Territory />} />
-                        <Route path="/Setup/states" element={<State />} />
-                        <Route path="/Setup/divisions" element={<Division />} />
-                        <Route path="/Setup/products" element={<Product />} />
-                        <Route path="/Setup/aop" element={<Aop />} />
-                        <Route path="/Setup/employee" element={<Employee />} />
-                      
-                      </>
-                    )}
-                  </Routes>
-                </TicketProvider>
+    <div>
+      <h1>Fleet Map</h1>
+      <MapContainer center={[20.5937, 78.9629]} zoom={5} style={{ height: '500px', width: '100%' }}>
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        {Array.isArray(vehicles) && vehicles.map(vehicle => (
+          <Marker key={vehicle.deviceId} position={[vehicle.latitude, vehicle.longitude]}>
+            <Popup>
+              <div>
+                <h3>{vehicle.regNo}</h3>
+                <p>{vehicle.address}</p>
+                <p>Status: {vehicle.vehicleStatus}</p>
+                <p>Speed: {vehicle.speed} km/h</p>
+                <p>Fuel: {vehicle.fuelLitre} litres</p>
               </div>
-            </div>
-          </>
-        ) : (
-          <Routes>
-            <Route path="*" element={<Login onLogin={handleLogin} />} />
-            <Route path="password-change" element={<ChangePass />} />
-          </Routes>
-        )}
-      </div>
-    </Router>
+            </Popup>
+          </Marker>
+        ))}
+      </MapContainer>
+    </div>
   );
-}
+};
+
+ReactDOM.render(<App />, document.getElementById('root'));
 
 export default App;
