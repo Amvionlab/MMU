@@ -26,6 +26,7 @@ import Employee from "./components/Admin/Employee";
 import Login from "./components/Login/Login";
 import Dashboard from "./components/Dashboard/Dashboard";
 import Mmu from "./components/Mmu/Mmu";
+import Map from "./components/Map/Map";
 import ChangePass from "./components/Login/Change_pass";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -125,19 +126,22 @@ function App() {
 
 {user && user.setup === "1" && (
                    
-                 
                       <>
+                      <Route
+                          path="/dashboard/mmu/map"
+                          element={<Map />}
+                        />
                           <Route path="/dashboard" element={<Dashboard />} />
                         <Route
                           path="/dashboard/mmu/:mmu"
                           element={<Mmu />}
                         />
                         <Route
-                          path="/dashboard/mmudashboard"
+                          path="/dashboard/mmu/biometric"
                           element={<MmuDashboard />}
                         />
                         <Route
-                          path="/eprescribe/eprescribe"
+                          path="/dashboard/mmu/eprescribe"
                           element={<EPrescibeSoftware />}
                         />
                        
