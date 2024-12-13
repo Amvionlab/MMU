@@ -1,551 +1,63 @@
-import React, { useContext, useEffect, useState, useMemo } from "react";
-import { CSVLink } from "react-csv";
-import { baseURL } from "../../config.js";
-import {
-  Table, TableHead, TableBody, TableCell, TableContainer, TableRow,
-  TablePagination, FormControl, OutlinedInput, MenuItem, Select, Checkbox, ListItemText,
-  TableSortLabel, Button
-} from "@mui/material";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { UserContext } from "../UserContext/UserContext.jsx";
-import { PieChart } from "@mui/x-charts";
-import { BarChart } from "@mui/x-charts/BarChart";
-import { format } from "date-fns";
+import React, { useState, useEffect } from 'react';
+import { createRoot } from 'react-dom/client';
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
 
-// Function to group data by a specific field
-const groupDataByField = (field, data) => {
-  if (!Array.isArray(data) || data.length === 0) {
-    return { "No Data": 0 };
-  }
+const Map = () => {
+  const [vehicles, setVehicles] = useState([]);
 
-  return data.reduce((acc, ticket) => {
-    const value = ticket[field] || "Empty";
-    acc[value] = (acc[value] || 0) + 1;
-    return acc;
-  }, {});
-};
-
-const FILTER_FIELDS = [
-  "bpartner_group", "business_partner", "prod_name", "state",
-  "division", "territory", "rm", "buh", "vendor_name", "zone",
-  "parameter_sap", "document", "aop_2024_mapping"
-];
-
-const SUMMARY_FIELDS = [
-  "bpartner_group", "business_partner", "prod_name", "state",
-  "division", "territory", "rm", "buh", "vendor_name", "zone"
-];
-
-const HEADERS = [
-  "month", "Date Invoiced", "bpartner group", "business partner", "prod value",
-  "prod name", "invoiced qty", "line amt", "sales_in_lacs", "product category", "product group",
-  "state", "zone", "division", "am", "territory", "rm", "buh", "product mapping",
-  "product type", "sap code", "product grouping", "vendor name", "parameter sap",
-  "brand", "product division", "document", "revenue account", "cogs account",
-  "year", "customer po num", "mapping code", "euroimmun top product", "pack size",
-  "aop 2024 mapping", "territory 2023", "buh 2023"
-];
-
-// Debounce utility function
-const debounce = (func, delay) => {
-  let timeout;
-  return function (...args) {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func(...args), delay);
-  };
-};
-
-function Reports() {
-  const { user } = useContext(UserContext);
-  const [tickets, setTickets] = useState([]);
-  const [totalTickets, setTotalTickets] = useState(0);
-  const [page, setPage] = useState(0);
-  const [ticketsPerPage, setTicketsPerPage] = useState(25);
-  const [selectedFilter, setSelectedFilter] = useState("bpartner_group");
-  const [selectedLabels, setSelectedLabels] = useState(FILTER_FIELDS.map(() => []));
-  const [fromDate, setFromDate] = useState(null);
-  const [toDate, setToDate] = useState(null);
-  const [totalLineAmt, setTotalLineAmt] = useState(0);
-  const [totalSalesAmt, setTotalSalesAmt] = useState(0);
-  const [totalInvoicedQty, setTotalInvoicedQty] = useState(0);
-  const [order, setOrder] = useState("asc");
-  const [orderBy, setOrderBy] = useState("");
-  const [availableFilters, setAvailableFilters] = useState({});
-  const [chartData, setChartData] = useState([]);
-  const [chartPage, setChartPage] = useState(0);
-  const [summaryData, setSummaryData] = useState([]);
-
-  const fetchTickets = () => {
-    const queryString = `page=${page + 1}&limit=${ticketsPerPage}` +
-      (user.accessId === "3" ? `&user=${user.userId}` : user.accessId === "5" ? `&support=${user.userId}` : "");
- 
-    const filters = selectedLabels.map((labels, index) => {
-        const field = FILTER_FIELDS[index];
-        if (labels.length > 0) {
-            return `${field} IN (${labels.map(label => `"${label}"`).join(',')})`;
-        }
-        return null;
-    }).filter(Boolean).join(' AND ');
-  
-    // Date range query generation
-    const dateQuery = fromDate && toDate 
-                      ? `(date_invoiced BETWEEN '${format(fromDate, 'yyyy-MM-dd')}' AND '${format(toDate, 'yyyy-MM-dd')}')` 
-                      : '';
-  
-    // Constructing the filter query
-    let filterQuery = '';
-    if (filters.length > 0 && dateQuery) {
-        // Both filters and date ranges are present
-        filterQuery = `&filters=${encodeURIComponent(filters + ' AND ' + dateQuery)}`;
-    } else if (filters.length > 0) {
-        // Only filters are present
-        filterQuery = `&filters=${encodeURIComponent(filters)}`;
-    } else if (dateQuery) {
-        // Only date query is present
-        filterQuery = `&filters=${encodeURIComponent(dateQuery)}`;
-    }
-  
-    console.log(filterQuery);
-    fetch(`${baseURL}backend/fetchTickets.php?${queryString}${filterQuery}`)
-      .then(response => response.json())
-      .then(data => {
-        if (data && data.tickets) {
-          setTickets(data.tickets);
-          setTotalTickets(data.total);
-        } else {
-          setTickets([]);
-          setTotalTickets(0);
-        }
-      })
-      .catch(error => console.error("Error fetching ticket data:", error));
-  };
-
-const fetchChartData = () => {
-  // Create filter conditions based on selectedLabels
-  const filters = selectedLabels.map((labels, index) => {
-      const field = FILTER_FIELDS[index];
-      if (labels.length > 0) {
-          return `${field} IN (${labels.map(label => `"${label}"`).join(',')})`;
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = [
+          { "latitude": 13.18041111111111, "longitude": 80.31421333333333, "speed": 0, "date": 1734062978948, "isoDate": "2024-12-13T04:09:38.948Z", "odoDistance": 39400.857484227985, "ignitionStatus": "OFF", "status": "OFF", "vehicleStatus": "PARKED", "address": "2.8 kms from Ward 10, Zone 1 Tiruvottiyur, Chennai, Chennai district, Tamil Nadu, India", "regNo": "TN12AR4716", "vehicleType": "TRAILER 20 FT", "vehicleId": "EGEwRm", "deviceId": "0355172100386299", "expiryDate": "2025-01-15", "onboardDate": "2023-01-23", "fuelLitre": 0, "bearing": 181, "serverTime": 1734063220967, "insideGeoFence": "N", "triggeredGeoFences": [], "rowId": 0 },
+          { "latitude": 15.8446066, "longitude": 79.9667549, "speed": 40, "date": 1734063212000, "isoDate": "2024-12-13T04:13:32.000Z", "odoDistance": 78609.4011969736, "ignitionStatus": "ON", "status": "ON", "vehicleStatus": "MOVING", "address": "3.9 kms from Addanki, Prakasam District, Andhra Pradesh, India", "regNo": "TN28BH7546", "vehicleType": "TRAILER 20 FT", "vehicleId": "Hgld3H", "deviceId": "352592571393453", "expiryDate": "2025-01-18", "onboardDate": "2024-01-18", "fuelLitre": 328.99, "bearing": 297, "serverTime": 1734063220967, "insideGeoFence": "N", "triggeredGeoFences": [], "rowId": 1 },
+          { "latitude": 15.83829, "longitude": 79.9695516, "speed": 41, "date": 1734063217000, "isoDate": "2024-12-13T04:13:37.000Z", "odoDistance": 73603.14437213384, "ignitionStatus": "ON", "status": "ON", "vehicleStatus": "MOVING", "address": "3.2 kms from Addanki, Prakasam District, Andhra Pradesh, India", "regNo": "TN28BH7544", "vehicleType": "TRAILER 20 FT", "vehicleId": "VzCOqG", "deviceId": "352592571393388", "expiryDate": "2025-01-18", "onboardDate": "2024-01-18", "fuelLitre": 305.91, "bearing": 345, "serverTime": 1734063220967, "insideGeoFence": "N", "triggeredGeoFences": [], "rowId": 2 },
+          { "latitude": 15.812103333333333, "longitude": 79.97386777777778, "speed": 0, "date": 1734063192355, "isoDate": "2024-12-13T04:13:12.355Z", "odoDistance": 9564.91353311085, "ignitionStatus": "ON", "status": "ON", "vehicleStatus": "IDLE", "address": "0.3 kms from Addanki, Prakasam District, Andhra Pradesh, India", "regNo": "TN12AT7934", "vehicleType": "TRAILER 20 FT", "vehicleId": "L4Pq6q", "deviceId": "0867440068831908", "expiryDate": "2025-07-19", "onboardDate": "2024-07-19", "fuelLitre": 0, "bearing": 336, "serverTime": 1734063220967, "insideGeoFence": "N", "triggeredGeoFences": [], "rowId": 3 },
+          { "latitude": 13.10251, "longitude": 80.10557722222222, "speed": 14, "date": 1734063213000, "isoDate": "2024-12-13T04:13:33.000Z", "odoDistance": 4883.771474987381, "ignitionStatus": "ON", "status": "ON", "vehicleStatus": "MOVING", "address": "1.4 kms from Ezhil Nagar, Thiruvallur district, Tamil Nadu, 600077, India", "regNo": "TN12Q3758", "vehicleType": "CAR", "vehicleId": "S5xyVT", "deviceId": "0867440067406181", "expiryDate": "2025-08-12", "onboardDate": "2024-08-12", "fuelLitre": 0, "bearing": 101, "serverTime": 1734063220967, "insideGeoFence": "N", "triggeredGeoFences": [], "rowId": 4 }
+        ];
+        setVehicles(data);
+      } catch (error) {
+        console.error('Error fetching the data:', error);
       }
-      return null;
-  }).filter(Boolean).join(' AND ');
+    };
 
-  // Date range query generation
-  const dateQuery = fromDate && toDate 
-                    ? `(date_invoiced BETWEEN '${format(fromDate, 'yyyy-MM-dd')}' AND '${format(toDate, 'yyyy-MM-dd')}')` 
-                    : '';
+    fetchData();
+    const interval = setInterval(fetchData, 30000); // Fetch data every 30 seconds
 
-  // Constructing the filter query
-  let filterQuery = '';
-  if (filters.length > 0 && dateQuery) {
-      // Both filters and date ranges are present
-      filterQuery = `&filters=${encodeURIComponent(filters + ' AND ' + dateQuery)}`;
-  } else if (filters.length > 0) {
-      // Only filters are present
-      filterQuery = `&filters=${encodeURIComponent(filters)}`;
-  } else if (dateQuery) {
-      // Only date query is present
-      filterQuery = `&filters=${encodeURIComponent(dateQuery)}`;
-  }
+    return () => clearInterval(interval);
+  }, []);
 
-  // Fetching chart data
-  fetch(`${baseURL}backend/fetchChartData.php?field=${selectedFilter}${filterQuery}`)
-    .then(response => response.json())
-    .then(data => {
-        setChartData(data.chartData);
-        const { total_invoiced_qty, total_line_amt, total_sales_in_lacs, total_pack_size } = data.sums || {};
-        setSummaryData([
-            { label: "Total Invoiced Qty", value: total_invoiced_qty },
-            { label: "Total Line Amount", value: total_line_amt },
-            { label: "Total Sales in Lacs", value: total_sales_in_lacs },
-            { label: "Total Pack Size", value: total_pack_size }
-        ]);
-    })
-    .catch(error => console.error("Error fetching chart data:", error));
-};
+  const polylinePositions = vehicles.map(vehicle => [vehicle.latitude, vehicle.longitude]);
 
-// debounce function to optimize fetch requests
-const debouncedFetch = debounce(() => {
-fetchChartData();
-fetchTickets();
-}, 300);
-
-useEffect(() => {
-debouncedFetch();
-}, [page, ticketsPerPage, selectedLabels, fromDate, toDate, selectedFilter]);
-
-// Load filter options
-useEffect(() => {
-const fetchAllFilterOptions = async () => {
-  for (const field of FILTER_FIELDS) {
-    try {
-      const response = await fetch(`${baseURL}backend/fetchFilterOptions.php?field=${field}`);
-      const data = await response.json();
-      setAvailableFilters((prev) => ({ ...prev, [field]: data.options }));
-    } catch (error) {
-      console.error(`Error fetching filter options for ${field}:`, error);
-    }
-  }
-};
-fetchAllFilterOptions();
-}, []);
-
-const handleFilterChange = (index) => (event) => {
-const { target: { value } } = event;
-setSelectedLabels((prev) => {
-  const updated = [...prev];
-  updated[index] = typeof value === "string" ? value.split(",") : value;
-  return updated;
-});
-};
-
-const handleSubmit = () => {
-// Trigger fetch when submit button is pressed
-fetchTickets();
-};
-
-const domainData = useMemo(() => groupDataByField(selectedFilter, tickets), [selectedFilter, tickets]);
-
-const pieChartData = useMemo(() => {
-return chartData.map(item => {
-  const label = item[selectedFilter] || 'Unknown';
-  return {
-    label: label.length > 9 ? label.slice(0, 8) + '...' : label,
-    value: item.count || 0,
-  };
-}).slice(chartPage * 8, chartPage * 8 + 8);
-}, [chartData, selectedFilter, chartPage]);
-
-const barChartData = useMemo(() => {
-  const labels = chartData.map(item => item[selectedFilter]).slice(chartPage * 8, chartPage * 8 + 8);
-  const values = chartData.map(item => item.salessum).slice(chartPage * 8, chartPage * 8 + 8);
-  return { labels, values };
-}, [chartData, selectedFilter, chartPage]);
-
-const descendingComparator = (a, b, orderBy) => {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-};
-
-const getComparator = (order, orderBy) => {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-};
-
-const sortedTickets = useMemo(() => {
-  return [...tickets].sort(getComparator(order, orderBy));
-}, [tickets, order, orderBy]);
-
-const handleRequestSort = (property) => {
-  const isAsc = orderBy === property && order === "asc";
-  setOrder(isAsc ? "desc" : "asc");
-  setOrderBy(property);
-};
-
-const handlePageChange = (event, newPage) => {
-  // Immediately set the new page state
-  setPage(newPage);
-  // Fetch tickets using the updated page
-  fetchTickets(newPage);
-};
-
-const handleRowsPerPageChange = (event) => {
-  setTicketsPerPage(parseInt(event.target.value, 10));
-  setPage(0); // Go back to the first page when changing limit
-  fetchTickets(); // Fetch tickets for the new limit and the first page
-};
-
-const handleChartPageChange = (event, newPage) => setChartPage(newPage); // Unified page change handler
-
-const csvData = useMemo(() => tickets.map((ticket) => ({
-  Id: ticket.id,
-  Type: ticket.type,
-  SLA: ticket.sla,
-  Status: ticket.status,
-  Service: ticket.service,
-  Department: ticket.department,
-  Assignees: ticket.assignees,
-  Domain: ticket.domain,
-  SubDomain: ticket.subdomain,
-  Customer: ticket.customer,
-  "Created At": ticket.post_date,
-  "Created By": ticket.name,
-  "Closed At": ticket.closed_date,
-})), [tickets]);
-
-const updatedHeaders = HEADERS.map((header) =>
-  header === "line amt"
-    ? `line amt (Total: ${(totalLineAmt || 0).toFixed(2)})`
-    : header === "invoiced qty"
-    ? `invoiced qty (Total: ${(totalInvoicedQty || 0).toFixed(2)})`
-    : header === "sales_in_lacs"
-    ? `sales_in_lacs (Total: ${(totalSalesAmt || 0).toFixed(2)})`
-    : header
-);
-
-return (
-  <div className="flex h-full bg-second p-0.5 gap-0.5 font-serif">
-    <div className="w-[12.5%] sticky top-0 h-full rounded bg-box p-2 overflow-y-auto">
+  return (
+    <div className='p-'>
       
-      {selectedLabels.map((selectedLabel, index) => (
-        FILTER_FIELDS[index] !== "date_invoiced" && (
-          <FormControl key={index} sx={{ my: 0.5, width: "100%" }} size="small">
-            <Select
-              multiple
-              value={selectedLabel}
-              onChange={handleFilterChange(index)}
-              displayEmpty
-              input={<OutlinedInput />}
-              renderValue={(selected) =>
-                selected.length === 0 ? (
-                  <span style={{ color: "#aaa" }}>{FILTER_FIELDS[index]}</span>
-                ) : selected.join(", ")
-              }
-              sx={{
-                fontSize: "0.75rem",
-                padding: "16px",
-                height: "30px",
-                "& .MuiSelect-select": {
-                  minHeight: "1.25rem",
-                  padding: "5px",
-                },
-              }}
-              MenuProps={{
-                PaperProps: {
-                  style: { maxHeight: 30 * 4.5 + 2, width: 200 },
-                },
-              }}
-            >
-              {(availableFilters[FILTER_FIELDS[index]] || []).map((label) => (
-                <MenuItem key={label} value={label}>
-                  <Checkbox checked={selectedLabel.includes(label)} size="small" />
-                  <ListItemText primary={label} sx={{ fontSize: "0.8rem" }} />
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        )
-      ))}
-    </div>
-
-    <div className="w-[87.5%] overflow-auto">
-      <div className="flex h-[10%] gap-0.5 mb-0.5 bg-second">
-        <div className="grid grid-cols-4 gap-0.5 w-full font-mono">
-          {summaryData.map((item, index) => (
-            <div key={index} className="flex flex-col items-center justify-center bg-white">
-              <div className="font-bold text-sm text-prime">{item.label}</div>
-              <div className="font-semibold text-xs">{item.value}</div>
-            </div>
-          ))}
-        </div>
-        <div className="bg-box p-2 text-center ">
-        <div className="text-xs font-bold flex text-nowrap mb-2">
-        <label>From &nbsp;:</label>
-        <DatePicker  className="bg-second px-2 py-0.5 rounded w-[80%] placeholder:text-prime  text-prime cursor-pointer"
-          selected={fromDate}
-          onChange={(date) => {
-            setFromDate(date);
-            if (!toDate || date > toDate) setToDate(date); // Match endDate to startDate if endDate is null or before startDate
-          }}
-          selectsStart
-          startDate={fromDate}
-          placeholderText="yyyy-mm-dd"
-          endDate={toDate}
-          dateFormat="yyyy-MM-dd"
-          isClearable
+      <MapContainer center={[15, 80]} zoom={5} style={{ height: '500px', width: '100%' }}>
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-      </div>
-      <div className="text-xs font-bold flex text-nowrap">
-        <label>To&emsp;&emsp;:</label>
-        <DatePicker className="bg-second px-2 rounded  py-0.5 w-[80%] placeholder:text-prime  text-prime cursor-pointer"
-          selected={toDate}
-          onChange={(date) => setToDate(date)}
-          selectsEnd
-          placeholderText="yyyy-mm-dd"
-          startDate={fromDate}
-          endDate={toDate}
-          minDate={fromDate}
-          dateFormat="yyyy-MM-dd"
-          isClearable
-        />
-      </div>
-
-    
-      </div>
-      </div>
-
-      <div className="flex h-[55%] gap-0.5 mb-0.5">
-        <div className="w-[15%] bg-box p-3 rounded gap-1">
-          <p className="font-bold text-sm font-serif m-1 mb-2 text-center">Charts By</p>
-          {SUMMARY_FIELDS.map((item) => (
-            <div
-              key={item}
-              onClick={() => setSelectedFilter(item.toLowerCase())}
-              className={`py-1 px-2 w-[95%] text-xs break-words flex grid-cols-1 font-medium rounded cursor-pointer m-1 ${
-                item.toLowerCase() === selectedFilter
-                  ? "bg-prime text-white"
-                  : "bg-box text-black border border-black"
-              }`}
-            >
-              <p className="capitalize text-nowrap">{item.replaceAll("_", " ")}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="w-[42.5%] bg-box p-2 rounded">
-          <PieChart
-            series={[
-              {
-                data: pieChartData,
-                innerRadius: 30,
-                outerRadius: 90,
-                highlightScope: { faded: "global", highlighted: "item" },
-                faded: {
-                  innerRadius: 28,
-                  additionalRadius: 0,
-                  color: "gray",
-                },
-                plugins: [
-                  {
-                    name: "legend",
-                    options: {
-                      labels: {
-                        font: {
-                          size: 10,
-                        },
-                      },
-                    },
-                  },
-                ],
-              },
-            ]}
-            height={280}
-            width={400}
-          />
-
-          <TablePagination
-            component="div"
-            count={chartData.length}
-            page={chartPage}
-            onPageChange={handleChartPageChange}
-            rowsPerPage={8}
-          />
-        </div>
-
-        <div className="w-[42.5%] bg-box p-2 rounded">
-          <BarChart
-            xAxis={[{ scaleType: "band", data: barChartData.labels }]}
-            series={[{ data: barChartData.values }]}
-            width={425}
-            height={300}
-          />
-        </div>
-      </div>
-
-      <div className="bg-box p-2 rounded h-auto">
-        <div className="w-full border-b h-10 flex text-sm justify-between items-center font-medium mb-2">
-          <div className="flex capitalize ml-1 mt-3 text-base">
-            <p className="font-bold text-prime">Analytics</p>
-          </div>
-          <TablePagination
-            component="div"
-            sx={{
-              "& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows": { fontSize: "10px" },
-              "& .MuiTablePagination-actions": { fontSize: "10px" },
-              minHeight: "30px",
-              ".MuiTablePagination-toolbar": { minHeight: "30px", padding: "0 8px" },
-            }}
-            count={totalTickets}
-            page={page}
-            onPageChange={handlePageChange}
-            rowsPerPage={ticketsPerPage}
-            onRowsPerPageChange={handleRowsPerPageChange}
-            rowsPerPageOptions={[25, 50, 100]}
-          />
-        </div>
-
-        <TableContainer sx={{ maxHeight: "calc(120vh - 200px)" }}>
-          <Table stickyHeader>
-            <TableHead>
-              <TableRow sx={{ backgroundColor: "#01AB86" }}>
-                {updatedHeaders.map((header, index) => (
-                  <TableCell key={index}
-                    align={["line amt", "invoiced qty"].includes(header) ? "center" : "left"}
-                    sx={{
-                      whiteSpace: "nowrap",
-                      fontWeight: "300",
-                      fontSize: "14px",
-                      padding: "1px 3px",
-                      backgroundColor: "#01AB86",
-                      color: "white",
-                    }}
-                  >
-                    <TableSortLabel
-                      active={orderBy === header.toLowerCase().replace(/\s/g, "_")}
-                      direction={orderBy === header.toLowerCase().replace(/\s/g, "_") ? order : "asc"}
-                      onClick={() => handleRequestSort(header.toLowerCase().replace(/\s/g, "_"))}
-                      sx={{
-                        "&.Mui-active": { color: "white" },
-                        "&:hover": { color: "white" },
-                        "& .MuiTableSortLabel-icon": { color: "white !important" },
-                      }}
-                    >
-                      {header}
-                    </TableSortLabel>
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {sortedTickets.length === 0 ? (
-                <TableRow hover>
-                  <TableCell colSpan={HEADERS.length} sx={{ padding: "2px 4px", fontSize: "10px", textAlign: "center" }}>
-                    No tickets available
-                  </TableCell>
-                </TableRow>
-              ) : (
-                sortedTickets
-                  .map((ticket) => (
-                    <TableRow key={ticket.id} hover>
-                      {HEADERS.map((header, index) => (
-                        <TableCell
-                          key={index}
-                          align={["line amt", "invoiced qty"].includes(header) ? "center" : "left"}
-                          sx={{
-                            padding: "2px 4px",
-                            fontSize: "10px",
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            cursor: "pointer",
-                          }}
-                        >
-                          {["prod name", "business partner", "customer po num"].includes(header)
-                            ? ticket[header.toLowerCase().replace(/\s/g, "_")]
-                                ?.split(" ")
-                                .slice(0, 3)
-                                .join(" ") + (ticket[header.toLowerCase().replace(/\s/g, "_")]?.split(" ").length > 3 ? "..." : "")
-                            : ticket[header.toLowerCase().replace(/\s/g, "_")]
-                          }
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
+        {vehicles.map(vehicle => (
+          <Marker key={vehicle.deviceId} position={[vehicle.latitude, vehicle.longitude]}>
+            <Popup>
+              <div>
+                <h3>{vehicle.regNo}</h3>
+                <p>{vehicle.address}</p>
+                <p>Status: {vehicle.vehicleStatus}</p>
+                <p>Speed: {vehicle.speed} km/h</p>
+                <p>Fuel: {vehicle.fuelLitre} litres</p>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
+        <Polyline positions={polylinePositions} color="black" />
+      </MapContainer>
     </div>
-  </div>
-);
-}
+  );
+};
 
-export default Reports;
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(<Map />);
+
+export default Map;
