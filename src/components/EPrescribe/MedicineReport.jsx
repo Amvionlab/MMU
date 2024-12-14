@@ -111,13 +111,22 @@ const MedicineReport = () => {
     <div className="bg-box h-auto">
       <div className="flex items-center justify-between bg-box border-b text-xs">
         <div className="flex items-center space-x-4 bg-box">
+        <div className="flex items-center">
+            <label className="font-semibold text-red-600">Drug:</label>
+            <input
+              type="text"
+              onChange={e => setSelectedMedicineName(e.target.value)}
+              placeholder="Enter Drug"
+              className="border px-1 py-0.5 ml-2"
+            />
+          </div>
           <div className="flex items-center">
             <label className="font-semibold text-red-600">From Date:</label>
             <input
               type="date"
               value={fromDate}
               onChange={e => setFromDate(e.target.value)}
-              className="border px-1 ml-2"
+              className="border px-1 py-0.5 ml-2"
             />
           </div>
 
@@ -127,7 +136,7 @@ const MedicineReport = () => {
               type="date"
               value={toDate}
               onChange={e => setToDate(e.target.value)}
-              className="border px-1 ml-2"
+              className="border px-1 py-0.5 ml-2"
             />
           </div>
 
@@ -135,7 +144,7 @@ const MedicineReport = () => {
             <label className="font-semibold text-red-600">Branch:</label>
             <select
               onChange={e => setSelectedBranch(e.target.value)}
-              className="border px-1 ml-2"
+              className="border px-1 py-0.5 ml-2"
             >
               <option value="">All</option>
               {[...new Set(data.map(row => row.branchName))].map(branch => (
@@ -144,19 +153,11 @@ const MedicineReport = () => {
             </select>
           </div>
 
-          <div className="flex items-center">
-            <label className="font-semibold text-red-600">Drug:</label>
-            <input
-              type="text"
-              onChange={e => setSelectedMedicineName(e.target.value)}
-              placeholder="Enter Drug"
-              className="border px-1 ml-2"
-            />
-          </div>
+         
         </div>
         <button
           onClick={exportToCSV}
-          className="flex justify-center items-center text-xs hover:shadow-md rounded-full border-red-200 border bg-second p-1 font-semibold"
+          className="flex justify-center items-center text-xs hover:shadow-md rounded-full border-red-200 border bg-second p-1 px-2 font-semibold"
         >
           <CiExport className="mr-1" /> Export
         </button>

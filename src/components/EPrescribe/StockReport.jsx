@@ -8,7 +8,7 @@ import TablePagination from '@mui/material/TablePagination';
 
 const StockReport = () => {
   const [stockPage, setStockPage] = useState(0);
-  const [stockRowsPerPage, setStockRowsPerPage] = useState(5);
+  const [stockRowsPerPage, setStockRowsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
 
   const dummyStockData = [
@@ -24,46 +24,66 @@ const StockReport = () => {
   const displayedStockData = filteredStockData.slice(stockPage * stockRowsPerPage, stockPage * stockRowsPerPage + stockRowsPerPage);
 
   return (
-    <>
-      <div>
-        <label>Search Product:</label>
-        <input
-          type="text"
-          onChange={e => setSearchTerm(e.target.value)}
-          placeholder="Enter a product name"
+    <div className="bg-box h-auto">
+      <div className="flex items-center justify-between bg-box border-b text-xs mb-2">
+        <div className="flex items-center">
+          <label className="font-semibold text-red-600">Search Product:</label>
+          <input
+            type="text"
+            onChange={e => setSearchTerm(e.target.value)}
+            placeholder="Enter a product name"
+            className="border px-1 py-0.5 ml-2"
+          />
+        </div>
+        <TablePagination
+          rowsPerPageOptions={[10, 25, 50]}
+          component="div"
+          count={filteredStockData.length}
+          page={stockPage}
+          rowsPerPage={stockRowsPerPage}
+          onPageChange={(event, newPage) => setStockPage(newPage)}
+          onRowsPerPageChange={event => {
+            setStockRowsPerPage(parseInt(event.target.value, 10));
+            setStockPage(0);
+          }}
+          sx={{
+            '& .MuiTablePagination-toolbar': {
+              fontSize: '11px',
+              fontWeight: 700,
+            },
+            '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows': {
+              fontSize: '11px',
+              fontWeight: 700,
+            },
+            '& .MuiTablePagination-select, & .MuiTablePagination-actions': {
+              fontSize: '11px',
+              fontWeight: 700,
+            },
+          }}
         />
       </div>
 
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 15]}
-        component="div"
-        count={filteredStockData.length}
-        rowsPerPage={stockRowsPerPage}
-        page={stockPage}
-        onPageChange={(event, newPage) => setStockPage(newPage)}
-        onRowsPerPageChange={event => {
-          setStockRowsPerPage(parseInt(event.target.value, 10));
-          setStockPage(0);
-        }}
-      />
-      <Table sx={{ minWidth: 650 }} aria-label="Stock Report" className="mt-4">
-        <TableHead>
-          <TableRow>
-          <TableCell style={{ fontWeight: "600", fontSize: "1rem" }}>Quantity Sold</TableCell>
-            <TableCell style={{ fontWeight: "600", fontSize: "1rem" }}>Current Stock</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {displayedStockData.map((row, index) => (
-            <TableRow key={index}>
-              <TableCell>{row.productName}</TableCell>
-              <TableCell>{row.quantitySold}</TableCell>
-              <TableCell>{row.currentStock}</TableCell>
+      <div style={{ maxWidth: '100%', overflowX: 'auto' }}>
+        <Table sx={{ minWidth: 650 }} aria-label="Stock Report" className="mt-2 bg-box">
+          <TableHead>
+            <TableRow>
+              <TableCell style={{ fontWeight: "600", fontSize: "14px", padding: "10px" }}>Product Name</TableCell>
+              <TableCell style={{ fontWeight: "600", fontSize: "14px", padding: "10px" }}>Quantity Sold</TableCell>
+              <TableCell style={{ fontWeight: "600", fontSize: "14px", padding: "10px" }}>Current Stock</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </>
+          </TableHead>
+          <TableBody>
+            {displayedStockData.map((row, index) => (
+              <TableRow key={index}>
+                <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>{row.productName}</TableCell>
+                <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>{row.quantitySold}</TableCell>
+                <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>{row.currentStock}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
   );
 };
 

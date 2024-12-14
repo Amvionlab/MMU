@@ -169,7 +169,7 @@ const SideMenu = () => {
               {isExpanded ? (
                 // Render the div without tooltip when expanded
                 <div
-                  className="flex items-center gap-2 p-3 m-1 whitespace-nowrap text-white rounded-lg transition-all duration-500 ease-in-out hover:bg-white hover:text-purple-500"
+                  className="flex items-center cursor-pointer gap-2 p-3 m-1 whitespace-nowrap text-white rounded-lg transition-all duration-500 ease-in-out hover:bg-white hover:text-purple-500"
                   onClick={handleIconClick}
                 >
                   <FontAwesomeIcon
@@ -188,7 +188,7 @@ const SideMenu = () => {
                   placement="right"
                 >
                   <div
-                    className="flex items-center gap-2 p-3 m-1 text-white rounded-lg transition-all duration-500 ease-in-out hover:bg-white hover:text-purple-500"
+                    className="flex items-center cursor-pointer gap-2 p-3 m-1 text-white rounded-lg transition-all duration-500 ease-in-out hover:bg-white hover:text-purple-500"
                     onClick={handleIconClick}
                   >
                     <FontAwesomeIcon
