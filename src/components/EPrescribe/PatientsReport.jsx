@@ -5,6 +5,7 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TablePagination from '@mui/material/TablePagination'; 
+import { CiExport } from "react-icons/ci";
 
 const PatientsReport = () => {
   const [patientsPage, setPatientsPage] = useState(0);
@@ -66,6 +67,27 @@ const PatientsReport = () => {
     fetchData();
   }, [fromDate, toDate]);
 
+  const exportToCSV = () => {
+    const csvRows = [
+      "Medicine Name,Category,Units,Total Stock,Sold,Generic,Manufacturer"
+    ];
+
+    soldOutData.forEach(row => {
+      const stockData = currentStockDet.find(stock => stock.medicineName === row.medicineName);
+      csvRows.push(
+        `${row.medicineName || "N/A"},${row.category || "N/A"},${row.unitsellprice || "N/A"},${stockData?.totalStock || "N/A"},${row.sold || "N/A"},${stockData?.genericName || "N/A"},${stockData?.medicineManufacturerName || "N/A"}`
+      );
+    });
+
+    const blob = new Blob([csvRows.join("\n")], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "patients_report.csv";
+    a.click();
+  };
+
+
   // Filter patients data based on search term
   const filteredPatientsData = data.filter(item =>
     item.patientName?.toLowerCase().includes(searchPatientName.toLowerCase())
@@ -79,15 +101,7 @@ const PatientsReport = () => {
 
   return (
     <>
-      <div>
-        <label>Search Patient:</label>
-        <input
-          type="text"
-          onChange={e => setSearchPatientName(e.target.value)}
-          placeholder="Enter a patient name"
-          className='border ml-2'
-        />
-      </div>
+  
     
       <div className="flex items-center justify-between text-xs">
         <div className="flex items-center justify-center space-x-4">
@@ -110,21 +124,51 @@ const PatientsReport = () => {
               className="border px-1 ml-2"
             />
           </div>
+          <div>
+        <label className='text-prime'>Search Patient:</label>
+        <input
+          type="text"
+          onChange={e => setSearchPatientName(e.target.value)}
+          placeholder="Enter a patient name"
+          className='border ml-2'
+        />
+      </div>
+           <button
+                  onClick={exportToCSV}
+                  className="flex justify-center items-center text-xs hover:shadow-md rounded-full border-red-200 border bg-second p-1 font-semibold"
+                >
+                  <CiExport className="mr-1" /> Export
+                </button>
         </div>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={filteredPatientsData.length}
+          rowsPerPage={patientsRowsPerPage}
+          page={patientsPage}
+          onPageChange={(event, newPage) => setPatientsPage(newPage)}
+          onRowsPerPageChange={event => {
+            setPatientsRowsPerPage(parseInt(event.target.value, 10));
+            setPatientsPage(0); // Reset to the first page when rows per page changes
+          }}
+          sx={{
+            '& .MuiTablePagination-toolbar': {
+              fontSize: '11px',
+              fontWeight: 700,
+            },
+            '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows': {
+              fontSize: '11px',
+              fontWeight: 700,
+            },
+            '& .MuiTablePagination-select, & .MuiTablePagination-actions': {
+              fontSize: '11px',
+              fontWeight: 700,
+            },
+          }}
+        />
       </div>
 
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 15]}
-        component="div"
-        count={filteredPatientsData.length}
-        page={patientsPage}
-        rowsPerPage={patientsRowsPerPage}
-        onPageChange={(event, newPage) => setPatientsPage(newPage)}
-        onRowsPerPageChange={event => {
-          setPatientsRowsPerPage(parseInt(event.target.value, 10));
-          setPatientsPage(0);
-        }}
-      />
+
 
       <div style={{ maxWidth: '100%', overflowX: 'auto', overflowY: 'auto', height: '400px' }}>
         <Table sx={{ minWidth: 650 }} aria-label="Patients Report" className="mt-4">
