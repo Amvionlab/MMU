@@ -12,9 +12,9 @@ const PatientsReport = () => {
   const [searchPatientName, setSearchPatientName] = useState("");
   const [data, setData] = useState([]);
   const today = new Date();
-  const initialFromDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), 0, 0, 0));
+  const initialFromDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - 1, today.getUTCDate(), 0, 0, 0));
   const initialToDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), 23, 59, 59));
-
+  
   const [fromDate, setFromDate] = useState(initialFromDate.toISOString().split('T')[0]);
   const [toDate, setToDate] = useState(initialToDate.toISOString().split('T')[0]);
 
