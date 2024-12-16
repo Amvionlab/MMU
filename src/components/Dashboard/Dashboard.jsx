@@ -9,49 +9,49 @@ function Dashboard() {
       id: 1,
       unit: "Medical Unit1",
       doctorName: "Dr. Smith",
-      location: "Chennai",
+      location: "Kanyakumari",
     },
     {
       title: "MU2",
       id: 2,
       unit: "Medical Unit2",
       doctorName: "Dr. Johnson",
-      location: "Bangalore",
+      location: "Krishnagiri",
     },
     {
       title: "MU3",
       id: 3,
       unit: "Medical Unit3",
       doctorName: "Dr. Williams",
-      location: "Mumbai",
+      location: "Tirunelveli",
     },
     {
       title: "MU4",
       id: 4,
       unit: "Medical Unit4",
       doctorName: "Dr. Brown",
-      location: "Hyderabad",
+      location: "Tuticorin",
     },
     {
       title: "MU5",
       id: 5,
       unit: "Medical Unit5",
       doctorName: "Dr. Jones",
-      location: "Delhi",
+      location: "Nilgiris",
     },
     {
       title: "MU6",
       id: 6,
       unit: "Medical Unit6",
       doctorName: "Dr. Davis",
-      location: "Kolkata",
+      location: "Virudhunagar",
     },
     {
       title: "MU7",
       id: 7,
       unit: "Medical Unit7",
       doctorName: "Dr. Wilson",
-      location: "Pune",
+      location: "Tenkasi",
     },
   ];
 
@@ -67,14 +67,14 @@ function Dashboard() {
        {data.map((val, i) => (
   <div
     key={i}
-    className="bg-red-100 hover:bg-red-200 p-5 flex items-center justify-between rounded-full shadow-sm hover:shadow-md"
+    className="bg-red-100 hover:bg-red-200 p-4 flex items-center justify-between rounded-full shadow-sm hover:shadow-md"
   >
     <div className="flex items-center h-fit gap-5">
       <p className="text-sm font-bold">{val.title}</p>
       <p className="self-stretch w-[2px] bg-gray-700"></p>
       <div className="flex flex-col gap-1">
         <p className="text-sm font-semibold">{val.unit}</p>
-        <p className="text-sm font-normal">{val.doctorName}</p>
+       
         <p className="text-sm font-normal">{val.location}</p>
       </div>
     </div>

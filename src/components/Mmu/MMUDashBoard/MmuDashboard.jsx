@@ -74,7 +74,7 @@ function MmuDashboard() {
           Bio Metric
         </h2>
       </div>
-      <div className="flex items-center justify-between border-b h-full text-xs bg-box">
+      <div className="flex items-center justify-between border-b h-full text-xs bg-box p-3">
         <div className="flex items-center space-x-4">         
           <div className="flex items-center">
             <label className="font-semibold text-red-600">From Date:</label>
@@ -82,7 +82,7 @@ function MmuDashboard() {
               type="date"
               value={date.fromDate}
               onChange={(e) => setDate((prev) => ({ ...prev, fromDate: e.target.value }))}
-              className="border px-1 ml-2"
+              className="border px-1 py-0.5 ml-2"
             />
           </div>
           <div className="flex items-center">
@@ -91,13 +91,13 @@ function MmuDashboard() {
               type="date"
               value={date.endDate}
               onChange={(e) => setDate((prev) => ({ ...prev, endDate: e.target.value }))}
-              className="border px-1 ml-2"
+              className="border px-1 py-0.5 ml-2"
             />
           </div>
         </div>
         <button 
           onClick={exportToCSV}
-          className="flex justify-center items-center text-xs hover:shadow-md rounded-full border-red-200 border bg-second p-1 font-semibold"
+          className="flex justify-center items-center text-xs hover:shadow-md rounded-full border-red-200 border bg-second p-1  px-2 font-semibold"
         >
           <CiExport className="mr-1" /> Export
         </button>
@@ -128,13 +128,13 @@ function MmuDashboard() {
           }}
         />
       </div>
-      <Table sx={{ minWidth: 650, minHeight: 100 }} aria-label="simple table" className="bg-box text-center">
+      <Table sx={{ minWidth: 650, minHeight: 100 }} aria-label="simple table" className="bg-box text-center p-2">
         <TableHead>
           <TableRow>
             {headers.map((header, index) => (
               <TableCell
                 key={index}
-                style={{ fontWeight: "600", fontSize: "14px", padding: "10px" }}
+                style={{ fontWeight: "600", fontSize: "14px", padding: "12px" }}
               >
                 {header.replace(/_/g, " ")}
               </TableCell>
@@ -147,7 +147,7 @@ function MmuDashboard() {
               {Object.values(row).map((value, index) => (
                 <TableCell
                   key={index}
-                  style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}
+                  style={{ fontWeight: "500", fontSize: "12px", padding: "11px" }}
                 >
                   {value || "N/A"}
                 </TableCell>

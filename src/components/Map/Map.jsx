@@ -31,9 +31,9 @@ const Map = () => {
   const polylinePositions = vehicles.map(vehicle => [vehicle.latitude, vehicle.longitude]);
 
   return (
-    <div className='p-'>
+    <div className='p-0.5'>
       
-      <MapContainer center={[15, 80]} zoom={5} style={{ height: '500px', width: '100%' }}>
+      <MapContainer center={[15, 80]} zoom={7} style={{ height: '625px', width: '100%' }}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
@@ -56,8 +56,5 @@ const Map = () => {
   );
 };
 
-const container = document.getElementById('root');
-const root = createRoot(container);
-root.render(<Map />);
 
 export default Map;
