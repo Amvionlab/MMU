@@ -14,9 +14,9 @@ const StockReport = () => {
   const [soldOutData, setSoldOutData] = useState([]);
   const [currentStockDet, setCurrentStockDet] = useState([]);
   const today = new Date();
-  const initialFromDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), 0, 0, 0));
+  const initialFromDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - 1, today.getUTCDate(), 0, 0, 0));
   const initialToDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), 23, 59, 59));
-  const [fromDate, setFromDate] = useState(initialFromDate.toISOString().split('T')[0]);
+   const [fromDate, setFromDate] = useState(initialFromDate.toISOString().split('T')[0]);
   const [toDate, setToDate] = useState(initialToDate.toISOString().split('T')[0]);
 
   const url = "https://ez-hms-dev-app-ser.azurewebsites.net/api/MyReports/ProductSoldOutMedicineList";
@@ -147,13 +147,13 @@ const StockReport = () => {
       <Table sx={{ minWidth: 650 }} aria-label="Stock Report" className="mt-4">
         <TableHead>
           <TableRow>
-            <TableCell style={{ fontWeight: "600", fontSize: "0.8rem" }}>Medicine Name</TableCell>
-            <TableCell style={{ fontWeight: "600", fontSize: "0.8rem" }}>Medicine Category</TableCell>
-            <TableCell style={{ fontWeight: "600", fontSize: "0.8rem" }}>Units</TableCell>
-            <TableCell style={{ fontWeight: "600", fontSize: "0.8rem" }}>Total Stock</TableCell>
-            <TableCell style={{ fontWeight: "600", fontSize: "0.8rem" }}>Sold</TableCell>
-            <TableCell style={{ fontWeight: "600", fontSize: "0.8rem" }}>Generic</TableCell>
-            <TableCell style={{ fontWeight: "600", fontSize: "0.8rem" }}>Manufacturer</TableCell>
+            <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '10px' }}>Medicine Name</TableCell>
+            <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '10px' }}>Medicine Category</TableCell>
+            <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '10px' }}>Units</TableCell>
+            <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '10px' }}>Total Stock</TableCell>
+            <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '10px' }}>Sold</TableCell>
+            <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '10px' }}>Generic</TableCell>
+            <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '10px' }}>Manufacturer</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -162,13 +162,13 @@ const StockReport = () => {
               const stockData = currentStockDet.find(stock => stock.medicineName === row.medicineName);
               return (
                 <TableRow key={index}>
-                  <TableCell style={{fontSize: "0.8rem"}}>{row.medicineName}</TableCell>
-                  <TableCell style={{fontSize: "0.8rem"}}>{row.category}</TableCell>
-                  <TableCell style={{fontSize: "0.8rem"}}>{row.unitsellprice}</TableCell>
-                  <TableCell style={{fontSize: "0.8rem"}}>{stockData ? stockData.totalStock : "N/A"}</TableCell>
-                  <TableCell style={{fontSize: "0.8rem"}}>{row.sold}</TableCell>
-                  <TableCell style={{fontSize: "0.8rem"}}>{stockData ? stockData.genericName || "N/A" : "N/A"}</TableCell>
-                  <TableCell style={{fontSize: "0.8rem"}}>{stockData ? stockData.medicineManufacturerName || "N/A" : "N/A"}</TableCell>
+                  <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{row.medicineName}</TableCell>
+                  <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{row.category}</TableCell>
+                  <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{row.unitsellprice}</TableCell>
+                  <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{stockData ? stockData.totalStock : "N/A"}</TableCell>
+                  <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{row.sold}</TableCell>
+                  <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{stockData ? stockData.genericName || "N/A" : "N/A"}</TableCell>
+                  <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{stockData ? stockData.medicineManufacturerName || "N/A" : "N/A"}</TableCell>
                 </TableRow>
               );
             })

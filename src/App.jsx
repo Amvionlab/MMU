@@ -113,7 +113,7 @@ function App() {
 
                     {user && user.setup === "1" && (
                       <>
-                        <Route path="*" element={<Navigate to="/setup" />} />
+                        <Route path="*" element={<Navigate to="/dashboard" />} />
                         
                       </>
                     )}
@@ -130,7 +130,7 @@ function App() {
                       <Route
                           path="/dashboard/mmu/map"
                           element={<Map />}
-                        />
+                      />
                           <Route path="/dashboard" element={<Dashboard />} />
                         <Route
                           path="/dashboard/mmu/:mmu"

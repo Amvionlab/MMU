@@ -22,45 +22,9 @@ function Setup() {
           path: "/setup/user-accounts" 
       },
   ],
-    COMPANY: [
-        { 
-            title: "Zones", 
-            sub: "Manage Office Locations", 
-            icon: <StoreIcon />, 
-            path: "/setup/zones" 
-        },
-        { 
-            title: "Territories", 
-            sub: "Define Sales Regions", 
-            icon: <LanguageIcon />, 
-            path: "/setup/territories" 
-        },
-        { 
-            title: "States", 
-            sub: "Organize by State", 
-            icon: <MapIcon />, 
-            path: "/setup/states" 
-        },
-    ],
-    "PRODUCTS & EMPLOYEES ": [
-        { 
-            title: "Divisions", 
-            sub: "Manage Divisions", 
-            icon: <BusinessCenterIcon  />, 
-            path: "/setup/divisions" 
-        },
-        { 
-          title: "Product Divisions", 
-          sub: "Manage Product Divisions", 
-          icon: <CategoryIcon />, 
-          path: "/setup/products" 
-      },
-      { 
-        title: "AOP Mapping", 
-        sub: "Organize by AOP", 
-        icon: <MapIcon />, 
-        path: "/setup/aop" 
-    },
+   
+    "EMPLOYEES ": [
+        
         { 
             title: "Employee Directory", 
             sub: "Staff Information", 
