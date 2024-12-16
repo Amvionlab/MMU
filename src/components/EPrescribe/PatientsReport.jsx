@@ -4,7 +4,7 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import TablePagination from '@mui/material/TablePagination'; 
+import TablePagination from '@mui/material/TablePagination';
 import { CiExport } from "react-icons/ci";
 
 const PatientsReport = () => {
@@ -50,10 +50,10 @@ const PatientsReport = () => {
           provisionalDiagnosis: complaint.complaint.name || 'N/A',
           investigations: complaint.visit?.visitCode || 'N/A',
           finalDiagnosis: complaint.complaint.name || 'N/A',
-          treatment: 'N/A',  // Placeholder
+          treatment: 'N/A',
           result: complaint.visit?.status || 'N/A',
-          additionalInfo: 'N/A',  // Placeholder
-          initialMO: 'N/A',  // Placeholder
+          additionalInfo: 'N/A',
+          initialMO: 'N/A',
         }));
 
         setData(apiData);
@@ -85,8 +85,6 @@ const PatientsReport = () => {
     a.click();
   };
 
-
-  // Filter patients data based on search term
   const filteredPatientsData = data.filter(item =>
     item.patientName?.toLowerCase().includes(searchPatientName.toLowerCase())
   );
@@ -99,6 +97,7 @@ const PatientsReport = () => {
   return (
     <div>
       <div className="flex items-center justify-between text-xs">
+        {/* Search and Date Filters */}
         <div className="flex items-center justify-center space-x-4">
           <div className="flex items-center">
             <label className="font-semibold text-red-600">Search Patient:</label>
@@ -130,12 +129,12 @@ const PatientsReport = () => {
             />
           </div>
          
-           <button
-                  onClick={exportToCSV}
-                  className="flex justify-center items-center text-xs hover:shadow-md rounded-full border-red-200 border bg-second p-1 font-semibold"
-                >
-                  <CiExport className="mr-1" /> Export
-                </button>
+          <button
+            onClick={exportToCSV}
+            className="flex justify-center items-center text-xs hover:shadow-md rounded-full border-red-200 border bg-second p-1 px-2 font-semibold"
+          >
+            <CiExport className="mr-1" /> Export
+          </button>
         </div>
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
@@ -146,7 +145,7 @@ const PatientsReport = () => {
           onPageChange={(event, newPage) => setPatientsPage(newPage)}
           onRowsPerPageChange={event => {
             setPatientsRowsPerPage(parseInt(event.target.value, 10));
-            setPatientsPage(0); // Reset to the first page when rows per page changes
+            setPatientsPage(0);
           }}
           sx={{
             '& .MuiTablePagination-toolbar': {
@@ -165,41 +164,39 @@ const PatientsReport = () => {
         />
       </div>
 
-
-
-      <div style={{ maxWidth: '100%', overflowX: 'auto', overflowY: 'auto', height: '400px' }}>
-        <Table sx={{ minWidth: 650 }} aria-label="Patients Report" className="mt-4">
+      <div className="overflow-y-auto" style={{ maxHeight: '480px' }}>
+        <Table stickyHeader sx={{ minWidth: 650 }} aria-label="Patients Report" className="mt-4">
           <TableHead>
             <TableRow className="text-nowrap">
-              <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '10px' }}>Patient Name</TableCell>
-              <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '10px' }}>Registration Number</TableCell>
-              <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '10px' }}>Contact Number</TableCell>
-              <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '10px' }}>Age</TableCell>
-              <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '10px' }}>Gender</TableCell>
-              <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '10px' }}>Provisional Diagnosis</TableCell>
-              <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '10px' }}>Investigations</TableCell>
-              <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '10px' }}>Final Diagnosis</TableCell>
-              <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '10px' }}>Treatment</TableCell>
-              <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '10px' }}>Result Cured / Same condition / Referred / Expired</TableCell>
-              <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '10px' }}>Additional information if any</TableCell>
-              <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '10px' }}>Initial of the Medical officer</TableCell>
+              <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '11px' }}>Patient Name</TableCell>
+              <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '11px' }}>Registration Number</TableCell>
+              <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '11px' }}>Contact Number</TableCell>
+              <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '11px' }}>Age</TableCell>
+              <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '11px' }}>Gender</TableCell>
+              <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '11px' }}>Provisional Diagnosis</TableCell>
+              <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '11px' }}>Investigations</TableCell>
+              <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '11px' }}>Final Diagnosis</TableCell>
+              <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '11px' }}>Treatment</TableCell>
+              <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '11px' }}>Result Cured / Same condition / Referred / Expired</TableCell>
+              <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '11px' }}>Additional information if any</TableCell>
+              <TableCell style={{ fontWeight: '600', fontSize: '14px', padding: '11px' }}>Initial of the Medical officer</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {displayedPatientsData.map((row, index) => (
               <TableRow key={index}>
-                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{row.patientName}</TableCell>
-                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{row.registrationNumber}</TableCell>
-                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{row.contactNumber}</TableCell>
-                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{row.age}</TableCell>
-                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{row.gender}</TableCell>
-                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{row.provisionalDiagnosis}</TableCell>
-                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{row.investigations}</TableCell>
-                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{row.finalDiagnosis}</TableCell>
-                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{row.treatment}</TableCell>
-                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{row.result}</TableCell>
-                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{row.additionalInfo}</TableCell>
-                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{row.initialMO}</TableCell>
+                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px', whiteSpace: 'nowrap'  }}>{row.patientName}</TableCell>
+                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.registrationNumber}</TableCell>
+                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.contactNumber}</TableCell>
+                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.age}</TableCell>
+                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.gender}</TableCell>
+                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.provisionalDiagnosis}</TableCell>
+                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.investigations}</TableCell>
+                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px', whiteSpace: 'nowrap'  }}>{row.finalDiagnosis}</TableCell>
+                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.treatment}</TableCell>
+                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.result}</TableCell>
+                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.additionalInfo}</TableCell>
+                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.initialMO}</TableCell>
               </TableRow>
             ))}
           </TableBody>

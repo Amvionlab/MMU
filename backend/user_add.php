@@ -12,6 +12,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $usernameD = $_POST['username'];
     $usertype = $_POST['usertype'];
     $id = $_POST['employee_id'];
+    $zone = $_POST['zones'];
+    $aop = $_POST['aops'];
+    $division = $_POST['divisions'];
+    $product = $_POST['products'];
+    $state = $_POST['states'];
+    $territory = $_POST['territories'];
+
     $active = "1";
     
     // Check if the username already exists
@@ -29,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Fetch employee details based on employee_id
-    $empStmt = $conn->prepare("SELECT firstname, lastname, mobile, location, photo, employee_id, email FROM employee WHERE id = ?");
+    $empStmt = $conn->prepare("SELECT firstname, lastname, mobile, branch, photo, employee_id, email FROM employee WHERE id = ?");
     $empStmt->bind_param("s", $id);
     $empStmt->execute();
     $empStmt->bind_result($firstname, $lastname, $mobile, $location, $photo, $employee_id, $email);
@@ -44,8 +51,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Prepare to insert the new user
-    $stmt = $conn->prepare("INSERT INTO user (firstname, lastname, username, email, usertype, mobile, location, employee_id, photo, is_active, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssssssssss", $firstname, $lastname, $usernameD, $email, $usertype, $mobile, $location, $employee_id, $photo, $active, $password);
+    $stmt = $conn->prepare("INSERT INTO user (firstname, lastname, username, email, usertype, mobile, branch, employee_id, zone, aop, division, product, state, territory, photo, is_active, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("sssssssssssssssss", $firstname, $lastname, $usernameD, $email, $usertype, $mobile, $location, $employee_id, $zone, $aop, $division, $product, $state, $territory, $photo, $active, $password);
 
     if ($stmt->execute()) {
         $lstId = mysqli_insert_id($conn);
@@ -57,17 +64,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $port = $rq['port'];
         $fromname = $rq['fromname'];
         $from = $rq['frommail'];
-        $sub = "SAMPAT - AMS Login Details";
+        $sub = "CPC Analytics Login Details";
         $to = $email;
 
         // Set up email content
         $mailtxt = '<table align="center" border="0" cellspacing="3" cellpadding="3" width="100%" style="background:#f5f5f5; color: black; margin-top:10px;">
             <tbody>
             <tr>
-            <td colspan="2" style="font-weight:bold;text-align:center;font-size:17px;">SAMPAT - Asset Management System - Login Details</td>
+            <td colspan="2" style="font-weight:bold;text-align:center;font-size:17px;">CPC Analytics - Login Details</td>
             </tr>
             <tr>
-            <td><span style="font-weight:bold;">Dear ' . $firstname . '</span><br><br> Welcome to SAMPAT - Asset Management System. <br><br>Username: ' . $usernameD . '<br>Password: ' . $password . '<br><br> Kindly login with credentials.<br><br>Regards,<br>SAMPAT</td>
+            <td><span style="font-weight:bold;">Dear ' . $firstname . '</span><br><br> Welcome to CPC Analytics Web Application. <br><br>Username: ' . $usernameD . '<br>Password: ' . $password . '<br><br> Kindly login with credentials.<br><br>Regards,<br>CPC</td>
             </tr>
             </tbody>
             </table>';
