@@ -18,15 +18,7 @@ const Map = () => {
 
   useEffect(() => {
     // Fetch current location
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        setCurrentLocation([latitude, longitude]);
-      },
-      (error) => {
-        console.error('Error fetching location:', error);
-      }
-    );
+    
 
     const fetchData = async () => {
       try {
