@@ -55,7 +55,7 @@ function MMU() {
               <h2 className="font-semibold mt-4">IP Surveillance</h2>
             </div>
           </div>
-          <Link to="/dashboard/mmudashboard" className="block h-80">
+          <Link to="/dashboard/mmu/biometric" className="block h-80">
             <div className="bg-red-100 flex justify-center items-center rounded-md shadow-md hover:bg-red-200 hover:shadow-xl h-full">
               <div className="text-center">
                 <FaFingerprint size={80} />
@@ -63,13 +63,15 @@ function MMU() {
               </div>
             </div>
           </Link>
+          <Link to="/dashboard/mmu/map" className="block h-80">
           <div className="bg-red-100 flex justify-center items-center rounded-md shadow-md hover:bg-red-200 hover:shadow-xl h-full">
             <div className="text-center">
               <MdOutlineGpsFixed size={80} />
               <h2 className="font-semibold mt-4">GPS</h2>
             </div>
           </div>
-          <Link to="/eprescribe/eprescribe" className="block h-80">
+          </Link>
+          <Link to="/dashboard/mmu/eprescribe" className="block h-80">
             <div className="bg-red-100 flex justify-center items-center rounded-md shadow-md hover:bg-red-200 hover:shadow-xl h-full">
               <div className="text-center">
                 <MdNoteAlt size={80} />
