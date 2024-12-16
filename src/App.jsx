@@ -113,7 +113,7 @@ function App() {
 
                     {user && user.setup === "1" && (
                       <>
-                        <Route path="*" element={<Navigate to="/dashboard" />} />
+                        <Route path="*" element={<Navigate to="/setup" />} />
                         
                       </>
                     )}
@@ -124,7 +124,7 @@ function App() {
                       </>
                     )}
 
-{user && user.setup === "1" && (
+{user && user.dashboard === "1" && (
                    
                       <>
                       <Route
@@ -156,17 +156,17 @@ function App() {
 
                     {user && user.setup === "1" && (
                       <>
-                        <Route path="/setup/user" element={<User />} />
-                        
-                        <Route path="/setup/access" element={<Access />} />
+                        <Route path="/setup/user-accounts" element={<User />} />
                         <Route path="/setup" element={<Setup />} />
+                        {/* <Route path="/setup/access" element={<Access />} />
+                        
                         <Route path="/Setup/zones" element={<Location />} />
                         <Route path="/Setup/territories" element={<Territory />} />
                         <Route path="/Setup/states" element={<State />} />
                         <Route path="/Setup/divisions" element={<Division />} />
                         <Route path="/Setup/products" element={<Product />} />
                         <Route path="/Setup/aop" element={<Aop />} />
-                        <Route path="/Setup/employee" element={<Employee />} />
+                        <Route path="/Setup/employee" element={<Employee />} /> */}
                       
                       </>
                     )}

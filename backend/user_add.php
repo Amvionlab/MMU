@@ -10,14 +10,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Extract data from POST
     $password = $_POST['password']; 
     $usernameD = $_POST['username'];
+    $firstname = $_POST['firstname'];
+    $lastname = $_POST['lastname'];
     $usertype = $_POST['usertype'];
-    $id = $_POST['employee_id'];
-    $zone = $_POST['zones'];
-    $aop = $_POST['aops'];
-    $division = $_POST['divisions'];
-    $product = $_POST['products'];
-    $state = $_POST['states'];
-    $territory = $_POST['territories'];
+    $mobile = '';
+    $email = $_POST['email'];
+    $branch = 1;
+    $employee_id = '';
+    
 
     $active = "1";
     
@@ -35,24 +35,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
-    // Fetch employee details based on employee_id
-    $empStmt = $conn->prepare("SELECT firstname, lastname, mobile, branch, photo, employee_id, email FROM employee WHERE id = ?");
-    $empStmt->bind_param("s", $id);
-    $empStmt->execute();
-    $empStmt->bind_result($firstname, $lastname, $mobile, $location, $photo, $employee_id, $email);
-    $found = $empStmt->fetch();
-    $empStmt->close();
-
-    // Check if employee exists
-    if (!$found) {
-        $response = array('success' => false, 'message' => 'Employee not found.');
-        echo json_encode($response);
-        exit;
-    }
-
     // Prepare to insert the new user
-    $stmt = $conn->prepare("INSERT INTO user (firstname, lastname, username, email, usertype, mobile, branch, employee_id, zone, aop, division, product, state, territory, photo, is_active, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssssssssssssssss", $firstname, $lastname, $usernameD, $email, $usertype, $mobile, $location, $employee_id, $zone, $aop, $division, $product, $state, $territory, $photo, $active, $password);
+    $stmt = $conn->prepare("INSERT INTO user (firstname, lastname, username, email, usertype, mobile, branch, employee_id, is_active, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssssssssss", $firstname, $lastname, $usernameD, $email, $usertype, $mobile, $branch, $employee_id, $active, $password);
 
     if ($stmt->execute()) {
         $lstId = mysqli_insert_id($conn);
@@ -64,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $port = $rq['port'];
         $fromname = $rq['fromname'];
         $from = $rq['frommail'];
-        $sub = "CPC Analytics Login Details";
+        $sub = "Redcross Login Details";
         $to = $email;
 
         // Set up email content
@@ -74,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <td colspan="2" style="font-weight:bold;text-align:center;font-size:17px;">CPC Analytics - Login Details</td>
             </tr>
             <tr>
-            <td><span style="font-weight:bold;">Dear ' . $firstname . '</span><br><br> Welcome to CPC Analytics Web Application. <br><br>Username: ' . $usernameD . '<br>Password: ' . $password . '<br><br> Kindly login with credentials.<br><br>Regards,<br>CPC</td>
+            <td><span style="font-weight:bold;">Dear User,</span><br><br> Welcome to CPC Analytics Web Application. <br><br>Username: ' . $usernameD . '<br>Password: ' . $password . '<br><br> Kindly login with credentials.<br><br>Regards,<br>CPC</td>
             </tr>
             </tbody>
             </table>';

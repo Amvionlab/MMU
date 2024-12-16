@@ -22,17 +22,7 @@ function Setup() {
           path: "/setup/user-accounts" 
       },
   ],
-   
-    "EMPLOYEES ": [
-        
-        { 
-            title: "Employee Directory", 
-            sub: "Staff Information", 
-            icon: <PeopleAltIcon />, 
-            path: "/setup/employee" 
-        },
-    ],
-   
+      
   };
 
   
