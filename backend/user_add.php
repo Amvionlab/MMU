@@ -56,10 +56,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $mailtxt = '<table align="center" border="0" cellspacing="3" cellpadding="3" width="100%" style="background:#f5f5f5; color: black; margin-top:10px;">
             <tbody>
             <tr>
-            <td colspan="2" style="font-weight:bold;text-align:center;font-size:17px;">CPC Analytics - Login Details</td>
+            <td colspan="2" style="font-weight:bold;text-align:center;font-size:17px;">Redcross - Login Details</td>
             </tr>
             <tr>
-            <td><span style="font-weight:bold;">Dear User,</span><br><br> Welcome to CPC Analytics Web Application. <br><br>Username: ' . $usernameD . '<br>Password: ' . $password . '<br><br> Kindly login with credentials.<br><br>Regards,<br>CPC</td>
+            <td><span style="font-weight:bold;">Dear User,</span><br><br> Welcome to Redcross Web Application. <br><br>Username: ' . $usernameD . '<br>Password: ' . $password . '<br><br> Kindly login with credentials.<br><br>Regards,<br>Redcross</td>
             </tr>
             </tbody>
             </table>';

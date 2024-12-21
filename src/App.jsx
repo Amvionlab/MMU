@@ -128,7 +128,7 @@ function App() {
                    
                       <>
                       <Route
-                          path="/dashboard/mmu/map"
+                          path="/dashboard/mmu/map/:mmu"
                           element={<Map />}
                       />
                           <Route path="/dashboard" element={<Dashboard />} />
@@ -137,11 +137,11 @@ function App() {
                           element={<Mmu />}
                         />
                         <Route
-                          path="/dashboard/mmu/biometric"
+                          path="/dashboard/mmu/biometric/:mmu"
                           element={<MmuDashboard />}
                         />
                         <Route
-                          path="/dashboard/mmu/eprescribe"
+                          path="/dashboard/mmu/eprescribe/:mmu"
                           element={<EPrescibeSoftware />}
                         />
                        

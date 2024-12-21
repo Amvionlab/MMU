@@ -183,7 +183,8 @@ const PatientsReport = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {displayedPatientsData.map((row, index) => (
+          {displayedPatientsData.length > 0 ? (
+            displayedPatientsData.map((row, index) => (
               <TableRow key={index}>
                 <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px', whiteSpace: 'nowrap'  }}>{row.patientName}</TableCell>
                 <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.registrationNumber}</TableCell>
@@ -198,7 +199,14 @@ const PatientsReport = () => {
                 <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.additionalInfo}</TableCell>
                 <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.initialMO}</TableCell>
               </TableRow>
-            ))}
+            ))
+          ): (
+            <TableRow>
+              <TableCell colSpan={7} style={{ textAlign: "center" }}>
+                No data available for the selected date range.
+              </TableCell>
+            </TableRow>
+          )}
           </TableBody>
         </Table>
       </div>

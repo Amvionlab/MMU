@@ -67,7 +67,7 @@ const SideMenu = () => {
           <ul className="flex flex-col h-full gap-2">
             <li>
               <Link
-                to="/"
+                to="/dashboard"
                 className="flex items-center transition-none whitespace-nowrap gap-2 p-2 mb-4 bg-box hover:text-prime text-white text-lg rounded-full"
               >
                 {isExpanded ? (

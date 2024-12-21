@@ -8,6 +8,7 @@ import TableRow from "@mui/material/TableRow";
 import TablePagination from "@mui/material/TablePagination";
 import { FaFingerprint } from "react-icons/fa6";
 import useFetch from "../../../hooks/useFetch";
+import { baseURL } from '../../../config.js';
 
 const headers = [
   "id",
@@ -25,7 +26,8 @@ function MmuDashboard() {
   const [page, setPage] = useState(0);
   const [date, setDate] = useState({ fromDate: "", endDate: "" });
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const { allData } = useFetch("http://localhost/MMU/backend/fetchbio.php");
+
+  const { allData } = useFetch(`${baseURL}/backend/fetchbio.php`);
 
   useEffect(() => {
     if (date.endDate || date.fromDate) {

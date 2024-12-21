@@ -140,7 +140,7 @@ const MedicineReport = () => {
             />
           </div>
 
-          <div className="flex items-center">
+          {/* <div className="flex items-center">
             <label className="font-semibold text-red-600">Branch:</label>
             <select
               onChange={e => setSelectedBranch(e.target.value)}
@@ -151,7 +151,7 @@ const MedicineReport = () => {
                 <option key={branch} value={branch}>{branch}</option>
               ))}
             </select>
-          </div>
+          </div> */}
 
          
         </div>
@@ -202,7 +202,8 @@ const MedicineReport = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {displayedData.map((row, index) => (
+        {displayedData.length > 0 ? (
+          displayedData.map((row, index) => (
             <TableRow key={index}>
               <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>{(index+1)+(page*rowsPerPage)}</TableCell>
               <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>{row.patientName || "N/A"}</TableCell>
@@ -212,7 +213,14 @@ const MedicineReport = () => {
               <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>{row.qty || "N/A"}</TableCell>
               <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>{formatBillDate(row.billDate)}</TableCell>
             </TableRow>
-          ))}
+          ))
+          ): (
+            <TableRow>
+              <TableCell colSpan={7} style={{ textAlign: "center" }}>
+                No data available for the selected date range.
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
     </div>
