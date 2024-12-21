@@ -425,21 +425,15 @@ const handleRowsPerPageChange = (e) => {
                 <label className="text-sm font-semibold text-prime mr-2 w-32">
                     Branch
                 </label>
-                <select
+                <input
+                    type="text"
                     name="location"
+                    placeholder="Enter Branch"
                     value={formData.location}
                     onChange={handleChange}
                     className="flex-grow text-xs bg-box border p-2 border-gray-400 rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
-                >
-                    <option value="">Select Branch</option>
-                    {locations
-                    .filter(location => location.name) // Ensure that only locations with a name are shown
-                    .map((location) => (
-                        <option key={location.id} value={location.name}>
-                        {location.name}
-                        </option>
-                    ))}
-                </select>
+                  />
+                
                 </div>
 
                 <div className="flex items-center mb-2 mr-4">

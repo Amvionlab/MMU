@@ -5,53 +5,56 @@ import { RiDashboardHorizontalLine } from "react-icons/ri";
 function Dashboard() {
   const data = [
     {
-      title: "MU1",
+      title: "MU - 1",
       id: 1,
-      unit: "Medical Unit1",
+      unit: "Medical Unit 1",
       doctorName: "Dr. Smith",
-      location: "Chennai",
+      location: "Kanyakumari",
     },
     {
-      title: "MU2",
+      title: "MU - 2",
       id: 2,
-      unit: "Medical Unit2",
+      unit: "Medical Unit 2",
       doctorName: "Dr. Johnson",
-      location: "Bangalore",
+      location: "Krishnagiri",
     },
     {
-      title: "MU3",
+      title: "MU - 3",
       id: 3,
-      unit: "Medical Unit3",
-      doctorName: "Dr. Williams",
-      location: "Mumbai",
-    },
-    {
-      title: "MU4",
-      id: 4,
-      unit: "Medical Unit4",
-      doctorName: "Dr. Brown",
-      location: "Hyderabad",
-    },
-    {
-      title: "MU5",
-      id: 5,
-      unit: "Medical Unit5",
+      unit: "Medical Unit 5",
       doctorName: "Dr. Jones",
-      location: "Delhi",
+      location: "Nilgiris",
+      
     },
     {
-      title: "MU6",
-      id: 6,
-      unit: "Medical Unit6",
-      doctorName: "Dr. Davis",
-      location: "Kolkata",
-    },
-    {
-      title: "MU7",
-      id: 7,
-      unit: "Medical Unit7",
+      title: "MU - 4",
+      id: 4,
+      unit: "Medical Unit 7",
       doctorName: "Dr. Wilson",
-      location: "Pune",
+      location: "Tenkasi",
+     
+    },
+    {
+      title: "MU - 5",
+      id: 5,
+      unit: "Medical Unit 3",
+      doctorName: "Dr. Williams",
+      location: "Tirunelveli",
+    },
+    {
+      title: "MU - 6",
+      id: 6,
+      unit: "Medical Unit 4",
+      doctorName: "Dr. Brown",
+      location: "Tuticorin",
+    },
+    {
+      title: "MU - 7",
+      id: 7,
+      unit: "Medical Unit 6",
+      doctorName: "Dr. Davis",
+      location: "Virudhunagar",
+
     },
   ];
 
@@ -67,15 +70,15 @@ function Dashboard() {
        {data.map((val, i) => (
   <div
     key={i}
-    className="bg-red-100 hover:bg-red-200 p-5 flex items-center justify-between rounded-full shadow-sm hover:shadow-md"
+    className="bg-red-100 hover:bg-red-200 p-4 flex items-center justify-between rounded-full shadow-sm hover:shadow-md"
   >
     <div className="flex items-center h-fit gap-5">
-      <p className="text-sm font-bold">{val.title}</p>
+      <p className="text-sm font-bold ">{val.title}</p>
       <p className="self-stretch w-[2px] bg-gray-700"></p>
       <div className="flex flex-col gap-1">
-        <p className="text-sm font-semibold">{val.unit}</p>
-        <p className="text-sm font-normal">{val.doctorName}</p>
-        <p className="text-sm font-normal">{val.location}</p>
+        <p className="text-sm font-semibold ">{val.unit}</p>
+       
+        <p className="text-sm font-normal font-raleway">{val.location}</p>
       </div>
     </div>
 

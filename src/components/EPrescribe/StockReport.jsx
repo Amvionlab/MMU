@@ -6,17 +6,31 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TablePagination from '@mui/material/TablePagination';
 import { CiExport } from "react-icons/ci";
+import { AiFillFilePdf } from "react-icons/ai";
+import { BsPrinter } from "react-icons/bs";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
+  // Define the headers
+  const headers = [
+    "Medicine Name",
+    "Medicine Category",
+    "Units",
+    "Total Stock",
+    "Sold",
+    "Generic",
+    "Manufacturer",
+  ];
 const StockReport = () => {
   const [stockPage, setStockPage] = useState(0);
-  const [stockRowsPerPage, setStockRowsPerPage] = useState(5);
+  const [stockRowsPerPage, setStockRowsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
   const [soldOutData, setSoldOutData] = useState([]);
   const [currentStockDet, setCurrentStockDet] = useState([]);
   const today = new Date();
-  const initialFromDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), 0, 0, 0));
+  const initialFromDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - 1, today.getUTCDate(), 0, 0, 0));
   const initialToDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), 23, 59, 59));
-  const [fromDate, setFromDate] = useState(initialFromDate.toISOString().split('T')[0]);
+   const [fromDate, setFromDate] = useState(initialFromDate.toISOString().split('T')[0]);
   const [toDate, setToDate] = useState(initialToDate.toISOString().split('T')[0]);
 
   const url = "https://ez-hms-dev-app-ser.azurewebsites.net/api/MyReports/ProductSoldOutMedicineList";
@@ -77,10 +91,71 @@ const StockReport = () => {
   // Slice filtered data based on the current page and rows per page
   const paginatedData = filteredStockData.slice(stockPage * stockRowsPerPage, (stockPage + 1) * stockRowsPerPage);
 
+  const downloadPDF = () => {
+    const doc = new jsPDF();
+    
+    // Add a title to the document
+    doc.text("Stock Report", 14, 10);
+    
+    // Map the filtered stock data to the structure needed for the table
+    const tableData = filteredStockData.map((row) => {
+      const stockData = currentStockDet.find(stock => stock.medicineName === row.medicineName);
+      return [
+        row.medicineName || "N/A",                        // Medicine Name
+        row.category || "N/A",                             // Category
+        row.unitsellprice || "N/A",                        // Sell Price
+        stockData ? stockData.totalStock : "N/A",          // Total Stock (with fallback to "N/A")
+        row.sold || "N/A",                                 // Sold Quantity
+        stockData ? stockData.genericName || "N/A" : "N/A", // Generic Name (from stockData or "N/A")
+        stockData ? stockData.medicineManufacturerName || "N/A" : "N/A" // Manufacturer Name (from stockData or "N/A")
+      ];
+    });
+  
+    // Use autoTable to generate the table in the PDF
+    doc.autoTable({
+      head: [headers], // Column headers
+      body: tableData, // Table rows
+      startY: 20, // Y position of the table (adjust if necessary)
+    });
+    
+    // Save the generated PDF file
+    doc.save("stock_report.pdf");
+  };
+  
+  
+  const printTable = () => {
+    const printContent = document.getElementById("table-content").innerHTML;
+    const newWindow = window.open("", "_blank", "width=800,height=600");
+    newWindow.document.open();
+    newWindow.document.write(`
+      <html>
+        <head>
+          <title>Print Table</title>
+          <style>
+            table {
+              width: 100%;
+              border-collapse: collapse;
+            }
+            table, th, td {
+              border: 1px solid black;
+            }
+            th, td {
+              padding: 8px;
+              text-align: left;
+            }
+          </style>
+        </head>
+        <body>${printContent}</body>
+      </html>
+    `);
+    newWindow.document.close();
+    newWindow.print();
+  };
+  
+
+
   return (
     <div className="bg-white min-h-screen">
-   
-
       <div className="flex items-center justify-between bg-box border-b text-xs">
         <div className="flex items-center space-x-4 bg-box">
           <div className="flex items-center">
@@ -114,10 +189,31 @@ const StockReport = () => {
         </div>
         <button
           onClick={exportToCSV}
-          className="flex justify-center items-center text-xs hover:shadow-md rounded-full border-red-200 border bg-second p-1 font-semibold"
+          className="flex justify-center items-center text-xs hover:shadow-md rounded-full border-red-200 border bg-second p-1 px-2 font-semibold relative group"
         >
-          <CiExport className="mr-1" /> Export
+          <CiExport className="mr-1" />
+          <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 bg-black text-white text-xs rounded px-8 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+    Export CSV
+  </span>
         </button>
+        <button
+                    onClick={downloadPDF}
+                    className="flex justify-center items-center text-xs hover:shadow-md rounded-full border-red-200 border bg-second p-1 px-2 font-semibold relative group"
+                  >
+                    <AiFillFilePdf className="mr-1" /> 
+                    <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 bg-black text-white text-xs rounded px-8 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+    Download PDF
+  </span>
+                  </button>
+                  <button
+                    onClick={printTable}
+                    className="flex justify-center items-center text-xs hover:shadow-md rounded-full border-red-200 border bg-second p-1 px-2 font-semibold relative group"
+                  >
+                    <BsPrinter className="mr-1" />
+                      <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 bg-black text-white text-xs rounded px-8 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+    Print Table
+  </span>
+                  </button>
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
@@ -145,44 +241,47 @@ const StockReport = () => {
           }}
         />
       </div>
-
-      <Table sx={{ minWidth: 650 }} aria-label="Stock Report" className="mt-4">
-        <TableHead>
-          <TableRow>
-            <TableCell style={{ fontWeight: "600", fontSize: "0.8rem" }}>Medicine Name</TableCell>
-            <TableCell style={{ fontWeight: "600", fontSize: "0.8rem" }}>Medicine Category</TableCell>
-            <TableCell style={{ fontWeight: "600", fontSize: "0.8rem" }}>Units</TableCell>
-            <TableCell style={{ fontWeight: "600", fontSize: "0.8rem" }}>Total Stock</TableCell>
-            <TableCell style={{ fontWeight: "600", fontSize: "0.8rem" }}>Sold</TableCell>
-            <TableCell style={{ fontWeight: "600", fontSize: "0.8rem" }}>Generic</TableCell>
-            <TableCell style={{ fontWeight: "600", fontSize: "0.8rem" }}>Manufacturer</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {paginatedData.length > 0 ? (
-            paginatedData.map((row, index) => {
-              const stockData = currentStockDet.find(stock => stock.medicineName === row.medicineName);
-              return (
-                <TableRow key={index}>
-                  <TableCell style={{fontSize: "0.8rem"}}>{row.medicineName}</TableCell>
-                  <TableCell style={{fontSize: "0.8rem"}}>{row.category}</TableCell>
-                  <TableCell style={{fontSize: "0.8rem"}}>{row.unitsellprice}</TableCell>
-                  <TableCell style={{fontSize: "0.8rem"}}>{stockData ? stockData.totalStock : "N/A"}</TableCell>
-                  <TableCell style={{fontSize: "0.8rem"}}>{row.sold}</TableCell>
-                  <TableCell style={{fontSize: "0.8rem"}}>{stockData ? stockData.genericName || "N/A" : "N/A"}</TableCell>
-                  <TableCell style={{fontSize: "0.8rem"}}>{stockData ? stockData.medicineManufacturerName || "N/A" : "N/A"}</TableCell>
-                </TableRow>
-              );
-            })
-          ) : (
-            <TableRow>
-              <TableCell colSpan={7} style={{ textAlign: "center" }}>
-                No data available for the selected date range.
-              </TableCell>
+      <div id="table-content">
+  <Table sx={{ minWidth: 650 }} aria-label="Stock Report" className="mt-4">
+    <TableHead>
+      <TableRow>
+        {headers.map((header, index) => (
+          <TableCell
+            key={index}
+            style={{ fontWeight: "600", fontSize: "14px", padding: "12px" }}
+          >
+            {header.replace(/_/g, " ")}
+          </TableCell>
+        ))}
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {paginatedData.length > 0 ? (
+        paginatedData.map((row, index) => {
+          const stockData = currentStockDet.find(stock => stock.medicineName === row.medicineName);
+          return (
+            <TableRow key={index}>
+              <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{row.medicineName}</TableCell>
+              <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{row.category}</TableCell>
+              <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{row.unitsellprice}</TableCell>
+              <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{stockData ? stockData.totalStock : "N/A"}</TableCell>
+              <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{row.sold}</TableCell>
+              <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{stockData ? stockData.genericName || "N/A" : "N/A"}</TableCell>
+              <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{stockData ? stockData.medicineManufacturerName || "N/A" : "N/A"}</TableCell>
             </TableRow>
-          )}
-        </TableBody>
-      </Table>
+          );
+        })
+      ) : (
+        <TableRow>
+          <TableCell colSpan={7} style={{ textAlign: "center" }}>
+            No data available for the selected date range.
+          </TableCell>
+        </TableRow>
+      )}
+    </TableBody>
+  </Table>
+</div>
+
     </div>
   );
 };

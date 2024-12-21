@@ -1,7 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../UserContext/UserContext';
-import img from '../../../src/image/cpc-logo.png';
+import img from '../../../src/image/redcrosslogo.png';
+import img1 from '../../../src/image/redcrosstext.png';
 import "react-toastify/dist/ReactToastify.css";
 import './login.css';
 import AnimatedBackground from '../AnimatedBackground/AnimatedBackground';
@@ -62,7 +63,8 @@ const Login = ({ onLogin }) => {
           <div className="container-fluid font-sui">
             <div className="row justify-content-center">
               <div className="col-lg-12 text-center">
-                <img src={img} alt="sampat-logo" width="20%" height="20%" className="mx-auto d-block img-fluid mt-2" />
+              <img src={img} alt="sampat-logo" width="5%" height="5%" className="mx-auto d-block img-fluid" />
+                <img src={img1} alt="sampat-logo" width="20%" height="20%" className="mx-auto d-block img-fluid mt-2" />
               </div>
               <div className="col-lg-12 whole-login mt-4">
                 <div className='form-background'>

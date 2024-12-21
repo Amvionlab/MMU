@@ -6,6 +6,22 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TablePagination from '@mui/material/TablePagination';
 import { CiExport } from "react-icons/ci";
+import { AiFillFilePdf } from "react-icons/ai";
+import { BsPrinter } from "react-icons/bs";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+
+
+  // Define the headers
+  const headers = [
+    "S.No",
+    "Patient Name",
+    "Doctor Name",
+    "Drug Name",
+    "Category",
+    "Quantity",
+    "Bill Date",
+  ];
 
 const MedicineReport = () => {
   const [selectedBranch, setSelectedBranch] = useState("");
@@ -15,9 +31,9 @@ const MedicineReport = () => {
   const [data, setData] = useState([]);
 
   const today = new Date();
-  const initialFromDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), 0, 0, 0));
+  const initialFromDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - 1, today.getUTCDate(), 0, 0, 0));
   const initialToDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), 23, 59, 59));
-
+  
   const [fromDate, setFromDate] = useState(initialFromDate.toISOString().split('T')[0]);
   const [toDate, setToDate] = useState(initialToDate.toISOString().split('T')[0]);
 
@@ -74,15 +90,7 @@ const MedicineReport = () => {
   const exportToCSV = () => {
     const csvRows = [];
 
-    // Define the headers
-    const headers = [
-      "Patient Name",
-      "Doctor Name",
-      "Drug Name",
-      "Category",
-      "Quantity",
-      "Bill Date",
-    ];
+  
     csvRows.push(headers.join(','));
 
     // Add data rows
@@ -107,17 +115,83 @@ const MedicineReport = () => {
     a.click();
   };
 
+  const downloadPDF = () => {
+    const doc = new jsPDF();
+  
+    // Add a title to the document
+    doc.text("Medicine Report", 14, 10);
+  
+    // Format data to match autoTable's required structure
+    const tableData = filteredData.map((row) => [
+      row.patientName || "N/A",
+      row.doctorName || "N/A",
+      row.medicineName || "N/A",
+      row.medicineCategory || "N/A",
+      row.qty || "N/A",
+      formatBillDate(row.billDate) || "N/A",
+    ]);
+  
+    // Use autoTable to generate the table
+    doc.autoTable({
+      head: [headers], // Column headers
+      body: tableData, // Table rows
+      startY: 20, // Y position of the table (adjust if necessary)
+    });
+  
+    // Save the generated PDF file
+    doc.save("medicine_report.pdf");
+  };
+  
+  const printTable = () => {
+    const printContent = document.getElementById("table-content").innerHTML;
+    const newWindow = window.open("", "_blank", "width=800,height=600");
+    newWindow.document.open();
+    newWindow.document.write(`
+      <html>
+        <head>
+          <title>Print Table</title>
+          <style>
+            table {
+              width: 100%;
+              border-collapse: collapse;
+            }
+            table, th, td {
+              border: 1px solid black;
+            }
+            th, td {
+              padding: 8px;
+              text-align: left;
+            }
+          </style>
+        </head>
+        <body>${printContent}</body>
+      </html>
+    `);
+    newWindow.document.close();
+    newWindow.print();
+  };
+
+
   return (
     <div className="bg-box h-auto">
       <div className="flex items-center justify-between bg-box border-b text-xs">
         <div className="flex items-center space-x-4 bg-box">
+        <div className="flex items-center">
+            <label className="font-semibold text-red-600">Drug:</label>
+            <input
+              type="text"
+              onChange={e => setSelectedMedicineName(e.target.value)}
+              placeholder="Enter Drug"
+              className="border px-1 py-0.5 ml-2"
+            />
+          </div>
           <div className="flex items-center">
             <label className="font-semibold text-red-600">From Date:</label>
             <input
               type="date"
               value={fromDate}
               onChange={e => setFromDate(e.target.value)}
-              className="border px-1 ml-2"
+              className="border px-1 py-0.5 ml-2"
             />
           </div>
 
@@ -127,39 +201,53 @@ const MedicineReport = () => {
               type="date"
               value={toDate}
               onChange={e => setToDate(e.target.value)}
-              className="border px-1 ml-2"
+              className="border px-1 py-0.5 ml-2"
             />
           </div>
 
-          <div className="flex items-center">
+          {/* <div className="flex items-center">
             <label className="font-semibold text-red-600">Branch:</label>
             <select
               onChange={e => setSelectedBranch(e.target.value)}
-              className="border px-1 ml-2"
+              className="border px-1 py-0.5 ml-2"
             >
               <option value="">All</option>
               {[...new Set(data.map(row => row.branchName))].map(branch => (
                 <option key={branch} value={branch}>{branch}</option>
               ))}
             </select>
-          </div>
+          </div> */}
 
-          <div className="flex items-center">
-            <label className="font-semibold text-red-600">Drug:</label>
-            <input
-              type="text"
-              onChange={e => setSelectedMedicineName(e.target.value)}
-              placeholder="Enter Drug"
-              className="border px-1 ml-2"
-            />
-          </div>
+         
         </div>
         <button
           onClick={exportToCSV}
-          className="flex justify-center items-center text-xs hover:shadow-md rounded-full border-red-200 border bg-second p-1 font-semibold"
+          className="flex justify-center items-center text-xs hover:shadow-md rounded-full border-red-200 border bg-second p-1 px-2 font-semibold relative group"
         >
-          <CiExport className="mr-1" /> Export
+          
+          <CiExport className="mr-1" /> 
+          <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 bg-black text-white text-xs rounded px-8 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            Export CSV
+          </span>
         </button>
+        <button
+                      onClick={downloadPDF}
+                      className="flex justify-center items-center text-xs hover:shadow-md rounded-full border-red-200 border bg-second p-1 px-2 font-semibold relative group"
+                    >
+                      <AiFillFilePdf className="mr-1" />
+                      <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 bg-black text-white text-xs rounded px-8 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        Download PDF
+                      </span>
+                    </button>
+                    <button
+                      onClick={printTable}
+                      className="flex justify-center items-center text-xs hover:shadow-md rounded-full border-red-200 border bg-second p-1 px-2 font-semibold relative group"
+                    >
+                      <BsPrinter className="mr-1" />
+                      <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 bg-black text-white text-xs rounded px-8 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        Print Table
+                      </span>
+                    </button>
         <TablePagination
           rowsPerPageOptions={[10, 25, 50]}
           component="div"
@@ -188,32 +276,58 @@ const MedicineReport = () => {
         />
       </div>
 
-      <Table sx={{ minWidth: 650 }} aria-label="Medicine Report" className="mt-2 h-full bg-box">
-        <TableHead>
-          <TableRow>
-          <TableCell style={{ fontWeight: "600", fontSize: "14px", padding: "10px" }}>S.No</TableCell>
-            <TableCell style={{ fontWeight: "600", fontSize: "14px", padding: "10px" }}>Patient Name</TableCell>
-            <TableCell style={{ fontWeight: "600", fontSize: "14px", padding: "10px" }}>Doctor Name</TableCell>
-            <TableCell style={{ fontWeight: "600", fontSize: "14px", padding: "10px" }}>Drug Name</TableCell>
-            <TableCell style={{ fontWeight: "600", fontSize: "14px", padding: "10px" }}>Category</TableCell>
-            <TableCell style={{ fontWeight: "600", fontSize: "14px", padding: "10px" }}>Quantity</TableCell>
-            <TableCell style={{ fontWeight: "600", fontSize: "14px", padding: "10px" }}>Bill Date</TableCell>
+      <div id="table-content">
+  <Table sx={{ minWidth: 650 }} aria-label="Medicine Report" className="mt-2 h-full bg-box">
+    <TableHead>
+      <TableRow>
+        {headers.map((header, index) => (
+          <TableCell
+            key={index}
+            style={{ fontWeight: "600", fontSize: "14px", padding: "12px" }}
+          >
+            {header.replace(/_/g, " ")}
+          </TableCell>
+        ))}
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {displayedData.length > 0 ? (
+        displayedData.map((row, index) => (
+          <TableRow key={index}>
+            <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>
+              {(index + 1) + (page * rowsPerPage)}
+            </TableCell>
+            <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>
+              {row.patientName || "N/A"}
+            </TableCell>
+            <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>
+              {row.doctorName || "N/A"}
+            </TableCell>
+            <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>
+              {row.medicineName || "N/A"}
+            </TableCell>
+            <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>
+              {row.medicineCategory || "N/A"}
+            </TableCell>
+            <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>
+              {row.qty || "N/A"}
+            </TableCell>
+            <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>
+              {formatBillDate(row.billDate)}
+            </TableCell>
           </TableRow>
-        </TableHead>
-        <TableBody>
-          {displayedData.map((row, index) => (
-            <TableRow key={index}>
-              <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>{(index+1)+(page*rowsPerPage)}</TableCell>
-              <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>{row.patientName || "N/A"}</TableCell>
-              <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>{row.doctorName || "N/A"}</TableCell>
-              <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>{row.medicineName || "N/A"}</TableCell>
-              <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>{row.medicineCategory || "N/A"}</TableCell>
-              <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>{row.qty || "N/A"}</TableCell>
-              <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>{formatBillDate(row.billDate)}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+        ))
+      ) : (
+        <TableRow>
+          <TableCell colSpan={7} style={{ textAlign: "center" }}>
+            No data available for the selected date range.
+          </TableCell>
+        </TableRow>
+      )}
+    </TableBody>
+  </Table>
+</div>
+
     </div>
   );
 };

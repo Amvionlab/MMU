@@ -45,7 +45,7 @@ const SideMenu = () => {
 
   const menuItems = [
     { title: "Dashboard", icon: faTachometerAlt, to: "/dashboard", key: "dashboard" },
-     { title: "Setup Wizard", icon: faWrench, to: "/setup", key: "setup" },
+    { title: "Setup Wizard", icon: faWrench, to: "/setup", key: "setup" },
     { title: "Change Password", icon: faKey, to: "/password-change", key: "setup" },
   ];
 
@@ -67,7 +67,7 @@ const SideMenu = () => {
           <ul className="flex flex-col h-full gap-2">
             <li>
               <Link
-                to="/"
+                to="/dashboard"
                 className="flex items-center transition-none whitespace-nowrap gap-2 p-2 mb-4 bg-box hover:text-prime text-white text-lg rounded-full"
               >
                 {isExpanded ? (
@@ -169,7 +169,7 @@ const SideMenu = () => {
               {isExpanded ? (
                 // Render the div without tooltip when expanded
                 <div
-                  className="flex items-center gap-2 p-3 m-1 whitespace-nowrap text-white rounded-lg transition-all duration-500 ease-in-out hover:bg-white hover:text-purple-500"
+                  className="flex items-center cursor-pointer gap-2 p-3 m-1 whitespace-nowrap text-white rounded-lg transition-all duration-500 ease-in-out hover:bg-white hover:text-purple-500"
                   onClick={handleIconClick}
                 >
                   <FontAwesomeIcon
@@ -188,7 +188,7 @@ const SideMenu = () => {
                   placement="right"
                 >
                   <div
-                    className="flex items-center gap-2 p-3 m-1 text-white rounded-lg transition-all duration-500 ease-in-out hover:bg-white hover:text-purple-500"
+                    className="flex items-center cursor-pointer gap-2 p-3 m-1 text-white rounded-lg transition-all duration-500 ease-in-out hover:bg-white hover:text-purple-500"
                     onClick={handleIconClick}
                   >
                     <FontAwesomeIcon

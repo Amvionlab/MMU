@@ -10,8 +10,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Extract data from POST
     $password = $_POST['password']; 
     $usernameD = $_POST['username'];
+    $firstname = $_POST['firstname'];
+    $lastname = $_POST['lastname'];
     $usertype = $_POST['usertype'];
-    $id = $_POST['employee_id'];
+    $mobile = '';
+    $email = $_POST['email'];
+    $branch = 1;
+    $employee_id = '';
+    
+
     $active = "1";
     
     // Check if the username already exists
@@ -28,24 +35,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
-    // Fetch employee details based on employee_id
-    $empStmt = $conn->prepare("SELECT firstname, lastname, mobile, location, photo, employee_id, email FROM employee WHERE id = ?");
-    $empStmt->bind_param("s", $id);
-    $empStmt->execute();
-    $empStmt->bind_result($firstname, $lastname, $mobile, $location, $photo, $employee_id, $email);
-    $found = $empStmt->fetch();
-    $empStmt->close();
-
-    // Check if employee exists
-    if (!$found) {
-        $response = array('success' => false, 'message' => 'Employee not found.');
-        echo json_encode($response);
-        exit;
-    }
-
     // Prepare to insert the new user
-    $stmt = $conn->prepare("INSERT INTO user (firstname, lastname, username, email, usertype, mobile, location, employee_id, photo, is_active, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssssssssss", $firstname, $lastname, $usernameD, $email, $usertype, $mobile, $location, $employee_id, $photo, $active, $password);
+    $stmt = $conn->prepare("INSERT INTO user (firstname, lastname, username, email, usertype, mobile, branch, employee_id, is_active, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssssssssss", $firstname, $lastname, $usernameD, $email, $usertype, $mobile, $branch, $employee_id, $active, $password);
 
     if ($stmt->execute()) {
         $lstId = mysqli_insert_id($conn);
@@ -57,17 +49,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $port = $rq['port'];
         $fromname = $rq['fromname'];
         $from = $rq['frommail'];
-        $sub = "SAMPAT - AMS Login Details";
+        $sub = "Redcross Login Details";
         $to = $email;
 
         // Set up email content
         $mailtxt = '<table align="center" border="0" cellspacing="3" cellpadding="3" width="100%" style="background:#f5f5f5; color: black; margin-top:10px;">
             <tbody>
             <tr>
-            <td colspan="2" style="font-weight:bold;text-align:center;font-size:17px;">SAMPAT - Asset Management System - Login Details</td>
+            <td colspan="2" style="font-weight:bold;text-align:center;font-size:17px;">Redcross - Login Details</td>
             </tr>
             <tr>
-            <td><span style="font-weight:bold;">Dear ' . $firstname . '</span><br><br> Welcome to SAMPAT - Asset Management System. <br><br>Username: ' . $usernameD . '<br>Password: ' . $password . '<br><br> Kindly login with credentials.<br><br>Regards,<br>SAMPAT</td>
+            <td><span style="font-weight:bold;">Dear User,</span><br><br> Welcome to Redcross Web Application. <br><br>Username: ' . $usernameD . '<br>Password: ' . $password . '<br><br> Kindly login with credentials.<br><br>Regards,<br>Redcross</td>
             </tr>
             </tbody>
             </table>';

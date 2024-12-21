@@ -125,24 +125,24 @@ function App() {
                       </>
                     )}
 
-{user && user.setup === "1" && (
+{user && user.dashboard === "1" && (
                    
                       <>
                       <Route
-                          path="/dashboard/mmu/map"
+                          path="/dashboard/mmu/map/:mmu"
                           element={<Map />}
-                        />
+                      />
                           <Route path="/dashboard" element={<Dashboard />} />
                         <Route
                           path="/dashboard/mmu/:mmu"
                           element={<Mmu />}
                         />
                         <Route
-                          path="/dashboard/mmu/biometric"
+                          path="/dashboard/mmu/biometric/:mmu"
                           element={<MmuDashboard />}
                         />
                         <Route
-                          path="/dashboard/mmu/eprescribe"
+                          path="/dashboard/mmu/eprescribe/:mmu"
                           element={<EPrescibeSoftware />}
                         />
                         <Route
@@ -164,17 +164,17 @@ function App() {
 
                     {user && user.setup === "1" && (
                       <>
-                        <Route path="/setup/user" element={<User />} />
-                        
-                        <Route path="/setup/access" element={<Access />} />
+                        <Route path="/setup/user-accounts" element={<User />} />
                         <Route path="/setup" element={<Setup />} />
+                        {/* <Route path="/setup/access" element={<Access />} />
+                        
                         <Route path="/Setup/zones" element={<Location />} />
                         <Route path="/Setup/territories" element={<Territory />} />
                         <Route path="/Setup/states" element={<State />} />
                         <Route path="/Setup/divisions" element={<Division />} />
                         <Route path="/Setup/products" element={<Product />} />
                         <Route path="/Setup/aop" element={<Aop />} />
-                        <Route path="/Setup/employee" element={<Employee />} />
+                        <Route path="/Setup/employee" element={<Employee />} /> */}
                       
                       </>
                     )}

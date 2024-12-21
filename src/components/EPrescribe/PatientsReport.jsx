@@ -4,24 +4,43 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import TablePagination from '@mui/material/TablePagination'; 
+import TablePagination from '@mui/material/TablePagination';
 import { CiExport } from "react-icons/ci";
+import { AiFillFilePdf } from "react-icons/ai";
+import { BsPrinter } from "react-icons/bs";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+
+
+const headers = [
+  "Patient Name",
+  "Registration Number",
+  "Contact Number",
+  "Age",
+  "Gender",
+  "Provisional Diagnosis",
+  "Investigations",
+  "Final Diagnosis",
+  "Treatment",
+  "Result Cured / Same condition / Referred / Expired",
+  "Additional information if any",
+  "Initial of the Medical officer",
+];
 
 const PatientsReport = () => {
   const [patientsPage, setPatientsPage] = useState(0);
-  const [patientsRowsPerPage, setPatientsRowsPerPage] = useState(5);
+  const [patientsRowsPerPage, setPatientsRowsPerPage] = useState(10);
   const [searchPatientName, setSearchPatientName] = useState("");
   const [data, setData] = useState([]);
   const today = new Date();
-  const initialFromDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), 0, 0, 0));
+  const initialFromDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - 1, today.getUTCDate(), 0, 0, 0));
   const initialToDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), 23, 59, 59));
-
+  
   const [fromDate, setFromDate] = useState(initialFromDate.toISOString().split('T')[0]);
   const [toDate, setToDate] = useState(initialToDate.toISOString().split('T')[0]);
 
   const url = "https://ez-hms-dev-app-ser.azurewebsites.net/api/MyReports/patientRegister";
 
-  // Fetch data from API
   useEffect(() => {
     const fetchData = async () => {
       const payload = {
@@ -41,8 +60,7 @@ const PatientsReport = () => {
         if (!response.ok) throw new Error('Failed to fetch data');
 
         const result = await response.json();
-        
-        // Flatten the data for the table
+        console.log(result);
         const apiData = result.patientComplaints.map((complaint) => ({
           patientName: complaint.patreg.firstname || 'N/A',
           registrationNumber: complaint.patreg.regNum || 'N/A',
@@ -52,10 +70,10 @@ const PatientsReport = () => {
           provisionalDiagnosis: complaint.complaint.name || 'N/A',
           investigations: complaint.visit?.visitCode || 'N/A',
           finalDiagnosis: complaint.complaint.name || 'N/A',
-          treatment: 'N/A',  // Placeholder
+          treatment: 'N/A',
           result: complaint.visit?.status || 'N/A',
-          additionalInfo: 'N/A',  // Placeholder
-          initialMO: 'N/A',  // Placeholder
+          additionalInfo: 'N/A',
+          initialMO: 'N/A',
         }));
 
         setData(apiData);
@@ -68,50 +86,142 @@ const PatientsReport = () => {
   }, [fromDate, toDate]);
 
   const exportToCSV = () => {
-    const csvRows = [
-      "Medicine Name,Category,Units,Total Stock,Sold,Generic,Manufacturer"
-    ];
-
-    soldOutData.forEach(row => {
-      const stockData = currentStockDet.find(stock => stock.medicineName === row.medicineName);
-      csvRows.push(
-        `${row.medicineName || "N/A"},${row.category || "N/A"},${row.unitsellprice || "N/A"},${stockData?.totalStock || "N/A"},${row.sold || "N/A"},${stockData?.genericName || "N/A"},${stockData?.medicineManufacturerName || "N/A"}`
-      );
+    const csvRows = [];
+    
+    // Add headers to CSV rows
+    csvRows.push(headers.join(","));
+    
+    // Map through the displayed data and create CSV rows
+    displayedPatientsData.forEach((row) => {
+      const rowData = [
+        row.patientName || "N/A",
+        row.registrationNumber || "N/A",
+        row.contactNumber || "N/A",
+        row.age || "N/A",
+        row.gender || "N/A",
+        row.provisionalDiagnosis || "N/A",
+        row.investigations || "N/A",
+        row.finalDiagnosis || "N/A",
+        row.treatment || "N/A",
+        row.result || "N/A",
+        row.additionalInfo || "N/A",
+        row.initialMO || "N/A",
+      ];
+      csvRows.push(rowData.join(","));
     });
-
+  
+    // Create CSV blob and trigger download
     const blob = new Blob([csvRows.join("\n")], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
     a.download = "patients_report.csv";
+    document.body.appendChild(a); // Append to body
     a.click();
+    document.body.removeChild(a); // Cleanup
   };
+  
+  
 
-
-  // Filter patients data based on search term
   const filteredPatientsData = data.filter(item =>
     item.patientName?.toLowerCase().includes(searchPatientName.toLowerCase())
   );
-
-  // Paginate data
+  
   const displayedPatientsData = filteredPatientsData.slice(
     patientsPage * patientsRowsPerPage,
     patientsPage * patientsRowsPerPage + patientsRowsPerPage
   );
+  
+
+  const downloadPDF = () => {
+    const doc = new jsPDF();
+  
+    // Add a title to the document
+    doc.text("Patients Report", 14, 10);
+  
+    // Define table data
+    const tableData = displayedPatientsData.map((row) => [
+      row.patientName || "N/A",
+      row.registrationNumber || "N/A",
+      row.contactNumber || "N/A",
+      row.age || "N/A",
+      row.gender || "N/A",
+      row.provisionalDiagnosis || "N/A",
+      row.investigations || "N/A",
+      row.finalDiagnosis || "N/A",
+      row.treatment || "N/A",
+      row.result || "N/A",
+      row.additionalInfo || "N/A",
+      row.initialMO || "N/A",
+    ]);
+  
+    // Generate the PDF table
+    doc.autoTable({
+      head: [headers], // Use headers array for table column titles
+      body: tableData,
+      startY: 20,
+      theme: "grid",
+      styles: { fontSize: 10, cellPadding: 2 },
+    });
+  
+    // Save the PDF
+    doc.save("patients_report.pdf");
+  };
+  
+  
+  const printTable = () => {
+    const printContent = document.querySelector("table").outerHTML; // Get table HTML
+    const newWindow = window.open("", "_blank", "width=800,height=600");
+    
+    newWindow.document.open();
+    newWindow.document.write(`
+      <html>
+        <head>
+          <title>Print Table</title>
+          <style>
+            table {
+              width: 100%;
+              border-collapse: collapse;
+            }
+            table, th, td {
+              border: 1px solid black;
+            }
+            th, td {
+              padding: 8px;
+              text-align: left;
+            }
+          </style>
+        </head>
+        <body>${printContent}</body>
+      </html>
+    `);
+    newWindow.document.close();
+    newWindow.print();
+  };
+  
 
   return (
-    <>
-  
-    
+    <div>
       <div className="flex items-center justify-between text-xs">
+        {/* Search and Date Filters */}
         <div className="flex items-center justify-center space-x-4">
+          <div className="flex items-center">
+            <label className="font-semibold text-red-600">Search Patient:</label>
+            <input
+              type="text"
+              onChange={e => setSearchPatientName(e.target.value)}
+              placeholder="Enter a patient name"
+              className="border px-1 py-0.5 ml-2"
+            />
+          </div>
+
           <div className="flex items-center">
             <label className="font-semibold text-red-600">From Date:</label>
             <input
               type="date"
               value={fromDate}
               onChange={e => setFromDate(e.target.value)}
-              className="border px-1 ml-2"
+              className="border px-1 py-0.5 ml-2"
             />
           </div>
 
@@ -121,24 +231,41 @@ const PatientsReport = () => {
               type="date"
               value={toDate}
               onChange={e => setToDate(e.target.value)}
-              className="border px-1 ml-2"
+              className="border px-1 py-0.5 ml-2"
             />
           </div>
-          <div>
-        <label className='text-prime'>Search Patient:</label>
-        <input
-          type="text"
-          onChange={e => setSearchPatientName(e.target.value)}
-          placeholder="Enter a patient name"
-          className='border ml-2'
-        />
-      </div>
-           <button
-                  onClick={exportToCSV}
-                  className="flex justify-center items-center text-xs hover:shadow-md rounded-full border-red-200 border bg-second p-1 font-semibold"
-                >
-                  <CiExport className="mr-1" /> Export
-                </button>
+         
+          <button
+  onClick={exportToCSV}
+  className="flex justify-center items-center text-xs hover:shadow-md rounded-full border-red-200 border bg-second p-1 px-2 font-semibold relative group"
+>
+  <CiExport className="mr-1" />
+  <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 bg-black text-white text-xs rounded px-3 py-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+    Export CSV
+  </span>
+</button>
+
+<button
+  onClick={downloadPDF}
+  className="flex justify-center items-center text-xs hover:shadow-md rounded-full border-red-200 border bg-second p-1 px-2 font-semibold relative group"
+>
+  <AiFillFilePdf className="mr-1" />
+  <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 bg-black text-white text-xs rounded px-3 py-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+    Download PDF
+  </span>
+</button>
+
+<button
+  onClick={printTable}
+  className="flex justify-center items-center text-xs hover:shadow-md rounded-full border-red-200 border bg-second p-1 px-2 font-semibold relative group"
+>
+  <BsPrinter className="mr-1" />
+  <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 bg-black text-white text-xs rounded px-3 py-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+    Print Table
+  </span>
+</button>
+
+
         </div>
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
@@ -149,7 +276,7 @@ const PatientsReport = () => {
           onPageChange={(event, newPage) => setPatientsPage(newPage)}
           onRowsPerPageChange={event => {
             setPatientsRowsPerPage(parseInt(event.target.value, 10));
-            setPatientsPage(0); // Reset to the first page when rows per page changes
+            setPatientsPage(0);
           }}
           sx={{
             '& .MuiTablePagination-toolbar': {
@@ -168,47 +295,49 @@ const PatientsReport = () => {
         />
       </div>
 
-
-
-      <div style={{ maxWidth: '100%', overflowX: 'auto', overflowY: 'auto', height: '400px' }}>
-        <Table sx={{ minWidth: 650 }} aria-label="Patients Report" className="mt-4">
+      <div className="overflow-y-auto" style={{ maxHeight: '480px' }}>
+        <Table stickyHeader sx={{ minWidth: 650 }} aria-label="Patients Report" className="mt-4">
           <TableHead>
             <TableRow className="text-nowrap">
-              <TableCell style={{ fontWeight: '600' }}>Patient Name</TableCell>
-              <TableCell style={{ fontWeight: '600' }}>Registration Number</TableCell>
-              <TableCell style={{ fontWeight: '600' }}>Contact Number</TableCell>
-              <TableCell style={{ fontWeight: '600' }}>Age</TableCell>
-              <TableCell style={{ fontWeight: '600' }}>Gender</TableCell>
-              <TableCell style={{ fontWeight: '600' }}>Provisional Diagnosis</TableCell>
-              <TableCell style={{ fontWeight: '600' }}>Investigations</TableCell>
-              <TableCell style={{ fontWeight: '600' }}>Final Diagnosis</TableCell>
-              <TableCell style={{ fontWeight: '600' }}>Treatment</TableCell>
-              <TableCell style={{ fontWeight: '600' }}>Result Cured / Same condition / Referred / Expired</TableCell>
-              <TableCell style={{ fontWeight: '600' }}>Additional information if any</TableCell>
-              <TableCell style={{ fontWeight: '600' }}>Initial of the Medical officer</TableCell>
+             {headers.map((header, index) => (
+                     <TableCell
+                       key={index}
+                       style={{ fontWeight: "600", fontSize: "14px", padding: "12px" }}
+                     >
+                       {header.replace(/_/g, " ")}
+                     </TableCell>
+                   ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            {displayedPatientsData.map((row, index) => (
+          {displayedPatientsData.length > 0 ? (
+            displayedPatientsData.map((row, index) => (
               <TableRow key={index}>
-                <TableCell>{row.patientName}</TableCell>
-                <TableCell>{row.registrationNumber}</TableCell>
-                <TableCell>{row.contactNumber}</TableCell>
-                <TableCell>{row.age}</TableCell>
-                <TableCell>{row.gender}</TableCell>
-                <TableCell>{row.provisionalDiagnosis}</TableCell>
-                <TableCell>{row.investigations}</TableCell>
-                <TableCell>{row.finalDiagnosis}</TableCell>
-                <TableCell>{row.treatment}</TableCell>
-                <TableCell>{row.result}</TableCell>
-                <TableCell>{row.additionalInfo}</TableCell>
-                <TableCell>{row.initialMO}</TableCell>
+                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px', whiteSpace: 'nowrap'  }}>{row.patientName}</TableCell>
+                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.registrationNumber}</TableCell>
+                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.contactNumber}</TableCell>
+                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.age}</TableCell>
+                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.gender}</TableCell>
+                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.provisionalDiagnosis}</TableCell>
+                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.investigations}</TableCell>
+                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px', whiteSpace: 'nowrap'  }}>{row.finalDiagnosis}</TableCell>
+                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.treatment}</TableCell>
+                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.result}</TableCell>
+                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.additionalInfo}</TableCell>
+                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.initialMO}</TableCell>
               </TableRow>
-            ))}
+            ))
+          ): (
+            <TableRow>
+              <TableCell colSpan={7} style={{ textAlign: "center" }}>
+                No data available for the selected date range.
+              </TableCell>
+            </TableRow>
+          )}
           </TableBody>
         </Table>
       </div>
-    </>
+    </div>
   );
 };
 
