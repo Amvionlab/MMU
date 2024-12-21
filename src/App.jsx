@@ -36,6 +36,7 @@ import SideMenu from "./components/sideMenu/SideMenu";
 import Setup from "./components/Setup/Setup";
 import MmuDashboard from "./components/Mmu/MMUDashBoard/MmuDashboard";
 import EPrescibeSoftware from "./components/EPrescribe/EPrescibeSoftware";
+import VehicleFind from "./components/EPrescribe/VehicleFind";
 
 
 const INACTIVITY_TIMEOUT = 60 * 60 * 1000; // 1 hour
@@ -144,6 +145,13 @@ function App() {
                           path="/dashboard/mmu/eprescribe"
                           element={<EPrescibeSoftware />}
                         />
+                        <Route
+                          path="/dashboard/mmu/vehiclefind"
+                          element={<VehicleFind />}
+                        />
+                    
+                  
+                      
                        
                    
                         {/* <Route
