@@ -20,6 +20,7 @@ const headers = [
   "employee_name",
   "check_in_time",
   "check_out_time",
+  "total_hours",
   "date",
   "department",
 ];
