@@ -18,52 +18,64 @@ const Map = () => {
   const [currentLocation, setCurrentLocation] = useState([15, 80]); // Default map center
   const { mmu } = useParams();
   useEffect(() => {
-    
     const fetchData = async () => {
       try {
         let storedData = '';
         storedData = localStorage.getItem('vehicles');
-          console.log(storedData)
-          if (storedData) {
-            setVehicles(JSON.parse(storedData));
-          }
-        const response = await fetch('https://app.gpstrack.in/api/get_current_data?token=projectmmu_7jkITDLjgki2HoR1OLtwqpcHSXPQs6Kz&email=projectmmu@ircstnb.org');
-        
-        if (response.ok) {
-          const data = await response.json();
-         
-           // Store fetched data in localStorage
-         if(data.response != -1){
-          setVehicles(data);
- 
-         
-          localStorage.setItem('vehicles', JSON.stringify(data));
-         }
-        } else {
-          const storedData = localStorage.getItem('vehicles');
-          console.log(storageData)
-          if (storedData) {
-            setVehicles(JSON.parse(storedData));
-          }
-          throw new Error('Failed to fetch new data, fallback to localStorage');
-         
-        }
-      } catch (error) {
-        console.error('Error fetching data from API:', error);
- 
-        // Fallback to localStorage data
-        const storedData = localStorage.getItem('vehicles');
+        console.log(storedData);
+  
         if (storedData) {
           setVehicles(JSON.parse(storedData));
         }
+  
+        const response = await fetch('https://app.gpstrack.in/api/get_current_data?token=projectmmu_7jkITDLjgki2HoR1OLtwqpcHSXPQs6Kz&email=projectmmu@ircstnb.org');
+  
+        if (response.ok) {
+          const data = await response.json();
+  
+          if (data.response !== -1) {
+            // Filter vehicles based on the 'mmu' parameter
+            const vehicleIndex = parseInt(mmu) - 1; // Adjust index as 'mmu' is 1-based
+            const selectedVehicle = data[vehicleIndex] ? [data[vehicleIndex]] : [];
+  
+            setVehicles(selectedVehicle);
+  
+            // Store fetched data in localStorage
+            localStorage.setItem('vehicles', JSON.stringify(data));
+          }
+        } else {
+          // Fallback to localStorage
+          const storedData = localStorage.getItem('vehicles');
+          console.log(storedData);
+          if (storedData) {
+            const parsedData = JSON.parse(storedData);
+            const vehicleIndex = parseInt(mmu) - 1; // Adjust index
+            const selectedVehicle = parsedData[vehicleIndex] ? [parsedData[vehicleIndex]] : [];
+            setVehicles(selectedVehicle);
+          }
+          throw new Error('Failed to fetch new data, fallback to localStorage');
+        }
+      } catch (error) {
+        console.error('Error fetching data from API:', error);
+  
+        // Fallback to localStorage data
+        const storedData = localStorage.getItem('vehicles');
+        if (storedData) {
+          const parsedData = JSON.parse(storedData);
+          const vehicleIndex = parseInt(mmu) - 1; // Adjust index
+          const selectedVehicle = parsedData[vehicleIndex] ? [parsedData[vehicleIndex]] : [];
+          setVehicles(selectedVehicle);
+        }
       }
     };
- 
+  
     fetchData();
     const interval = setInterval(fetchData, 35000); // Fetch data every 35 seconds
- 
+  
     return () => clearInterval(interval);
-  }, []);
+  }, [mmu]);
+  
+  
  
   const polylinePositions = vehicles.length ? vehicles.map((vehicle) => [vehicle.latitude, vehicle.longitude]) : [];
  
