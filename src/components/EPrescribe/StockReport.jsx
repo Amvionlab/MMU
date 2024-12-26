@@ -4,6 +4,7 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import { useParams, Link } from "react-router-dom";
 import TablePagination from '@mui/material/TablePagination';
 import { CiExport } from "react-icons/ci";
 import { AiFillFilePdf } from "react-icons/ai";
@@ -26,6 +27,7 @@ const StockReport = () => {
   const [stockRowsPerPage, setStockRowsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
   const [soldOutData, setSoldOutData] = useState([]);
+  const { mmu } = useParams(); 
   const [currentStockDet, setCurrentStockDet] = useState([]);
   const today = new Date();
   const initialFromDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - 1, today.getUTCDate(), 0, 0, 0));
@@ -130,7 +132,7 @@ const StockReport = () => {
     newWindow.document.write(`
       <html>
         <head>
-          <title>Print Table</title>
+        <title>Stock Report - MMU ${mmu}</title>
           <style>
             table {
               width: 100%;

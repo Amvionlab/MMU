@@ -51,7 +51,7 @@ function MMU() {
 
       <div className="h-[88%] bg-box p-4 flex justify-center items-center">
         <div className="grid grid-cols-4 gap-4 w-full">
-          <div onClick={() => setIsModalOpen(true)} className="bg-red-100 flex justify-center items-center rounded-md shadow-md hover:bg-red-200 hover:shadow-xl h-full">
+          <div onClick={() => setIsModalOpen(true)} className="bg-red-100 cursor-pointer flex justify-center items-center rounded-md shadow-md hover:bg-red-200 hover:shadow-xl h-full">
             <div className="text-center">
               <BiCctv size={100} />
               <h2 className="font-semibold mt-4">IP Surveillance</h2>

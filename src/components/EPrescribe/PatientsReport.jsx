@@ -3,6 +3,7 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
+import { useParams, Link } from "react-router-dom";
 import TableRow from '@mui/material/TableRow';
 import TablePagination from '@mui/material/TablePagination';
 import { CiExport } from "react-icons/ci";
@@ -28,11 +29,13 @@ const headers = [
 ];
 
 const PatientsReport = () => {
+  
   const [patientsPage, setPatientsPage] = useState(0);
   const [patientsRowsPerPage, setPatientsRowsPerPage] = useState(10);
   const [searchPatientName, setSearchPatientName] = useState("");
   const [data, setData] = useState([]);
   const today = new Date();
+  const { mmu } = useParams(); 
   const initialFromDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - 1, today.getUTCDate(), 0, 0, 0));
   const initialToDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), 23, 59, 59));
   
@@ -177,7 +180,7 @@ const PatientsReport = () => {
     newWindow.document.write(`
       <html>
         <head>
-          <title>Print Table</title>
+        <title>Patients Report - MMU ${mmu}</title>
           <style>
             table {
               width: 100%;

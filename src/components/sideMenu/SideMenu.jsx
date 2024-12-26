@@ -46,7 +46,7 @@ const SideMenu = () => {
   const menuItems = [
     { title: "Dashboard", icon: faTachometerAlt, to: "/dashboard", key: "dashboard" },
     { title: "Setup Wizard", icon: faWrench, to: "/setup", key: "setup" },
-    { title: "Change Password", icon: faKey, to: "/password-change", key: "setup" },
+    { title: "Change Password", icon: faKey, to: "/password-change", key: "transfer" },
   ];
 
   const handleMouseEnter = (title) => {

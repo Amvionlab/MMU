@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
+import { useParams, Link } from "react-router-dom";
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TablePagination from '@mui/material/TablePagination';
@@ -29,7 +30,7 @@ const MedicineReport = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [data, setData] = useState([]);
-
+  const { mmu } = useParams(); 
   const today = new Date();
   const initialFromDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - 1, today.getUTCDate(), 0, 0, 0));
   const initialToDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), 23, 59, 59));
@@ -149,7 +150,7 @@ const MedicineReport = () => {
     newWindow.document.write(`
       <html>
         <head>
-          <title>Print Table</title>
+          <title>Medicine Report - MMU ${mmu}</title>
           <style>
             table {
               width: 100%;

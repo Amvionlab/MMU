@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
 import { CiExport } from "react-icons/ci";
 import { AiFillFilePdf } from "react-icons/ai";
 import { BsPrinter } from "react-icons/bs";
@@ -31,7 +32,7 @@ function MmuDashboard() {
   const [page, setPage] = useState(0);
   const [date, setDate] = useState({ fromDate: "", endDate: "" });
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
+  const { mmu } = useParams(); 
   const { allData } = useFetch(`${baseURL}/backend/fetchbio.php`);
 
   useEffect(() => {
@@ -96,7 +97,7 @@ function MmuDashboard() {
     newWindow.document.write(`
       <html>
         <head>
-          <title>Print Table</title>
+          <title>Bio Metric - MMU ${mmu}</title>
           <style>
             table {
               width: 100%;
