@@ -29,7 +29,7 @@ const MedicineReport = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [data, setData] = useState([]);
-  const { mmu } = useParams(); 
+  const { mmu } = useParams();  
   const today = new Date();
   const initialFromDate = new Date(today.setMonth(today.getMonth() - 1)); // One month back
   const initialToDate = new Date();
@@ -181,8 +181,16 @@ const MedicineReport = () => {
     newWindow.document.close();
     newWindow.print();
   };
+
+
+
+
   return (
+    
     <div className="bg-box h-auto">
+
+     
+
       <div className="flex items-center justify-between bg-box border-b text-xs">
         <div className="flex items-center space-x-4 bg-box">
           <div className="flex items-center">
