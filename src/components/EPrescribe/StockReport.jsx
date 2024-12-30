@@ -32,37 +32,65 @@ const StockReport = () => {
   const today = new Date();
   const initialFromDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - 1, today.getUTCDate(), 0, 0, 0));
   const initialToDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), 23, 59, 59));
-   const [fromDate, setFromDate] = useState(initialFromDate.toISOString().split('T')[0]);
+  const [fromDate, setFromDate] = useState(initialFromDate.toISOString().split('T')[0]);
   const [toDate, setToDate] = useState(initialToDate.toISOString().split('T')[0]);
 
-  const url = "https://ez-hms-dev-app-ser.azurewebsites.net/api/MyReports/ProductSoldOutMedicineList";
+  const url = "https://ez-hms-prod-app-ser.azurewebsites.net/api/MyReports/ProductSoldOutMedicineList";
+
+ 
 
   useEffect(() => {
     const fetchData = async () => {
+      const formattedFromDate = new Date(fromDate);
+      const formattedToDate = new Date(toDate);
+      
+      formattedFromDate.setUTCHours(0, 0, 0, 0);  // Start of the day
+      formattedToDate.setUTCHours(23, 59, 59, 999);  // End of the day
+      
       const payload = {
-        fromDate: new Date(fromDate).toISOString(),
-        toDate: new Date(toDate).toISOString(),
-        tenantId: "96e4f4cc-9452-418c-5c87-08dad9280a68",
-        branchId: "773911dd-1db2-4ae4-9b59-f634ee367f0e",
+        FromDate: formattedFromDate.toISOString(),
+        ToDate: formattedToDate.toISOString(),
+        TenantId: "155df572-7df7-4d98-8f2d-08dd1f702ff1",
+        BranchId: "2c1fdf05-7f1b-473e-9875-2545023d53ed", 
       };
-
+      
       try {
         const response = await fetch(url, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
-        if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
-        const result = await response.json();
-        setSoldOutData(result.soldOutDet || []);
-        setCurrentStockDet(result.currentStockDet || []);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP Error: ${response.status}`);
+        }
+  
+        // Check the response content type
+        const contentType = response.headers.get("Content-Type");
+        if (contentType && contentType.includes("application/json")) {
+          const result = await response.json();
+          console.log(result)
+          setSoldOutData(result.soldOutDet || []);
+          setCurrentStockDet(result.currentStockDet || []);
+        } else {
+          // Handle non-JSON response (e.g., plain text or error message)
+          const text = await response.text();
+          console.error("Non-JSON response received:", text);
+          setSoldOutData([]);
+          setCurrentStockDet([]);
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
+        setSoldOutData([]);
+        setCurrentStockDet([]);
       }
     };
-
+  
     fetchData();
   }, [fromDate, toDate]);
+  
+  
+  
 
   const filteredStockData = searchTerm
     ? soldOutData.filter(row =>
@@ -258,29 +286,30 @@ const StockReport = () => {
       </TableRow>
     </TableHead>
     <TableBody>
-      {paginatedData.length > 0 ? (
-        paginatedData.map((row, index) => {
-          const stockData = currentStockDet.find(stock => stock.medicineName === row.medicineName);
-          return (
-            <TableRow key={index}>
-              <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{row.medicineName}</TableCell>
-              <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{row.category}</TableCell>
-              <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{row.unitsellprice}</TableCell>
-              <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{stockData ? stockData.totalStock : "N/A"}</TableCell>
-              <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{row.sold}</TableCell>
-              <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{stockData ? stockData.genericName || "N/A" : "N/A"}</TableCell>
-              <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '10px' }}>{stockData ? stockData.medicineManufacturerName || "N/A" : "N/A"}</TableCell>
-            </TableRow>
-          );
-        })
-      ) : (
-        <TableRow>
-          <TableCell colSpan={7} style={{ textAlign: "center" }}>
-            No data available for the selected date range.
-          </TableCell>
+  {filteredStockData.length > 0 ? (
+    paginatedData.map((row, index) => {
+      const stockData = currentStockDet.find(stock => stock.medicineName === row.medicineName);
+      return (
+        <TableRow key={index}>
+          <TableCell>{row.medicineName || "N/A"}</TableCell>
+          <TableCell>{row.category || "N/A"}</TableCell>
+          <TableCell>{row.unitsellprice || "N/A"}</TableCell>
+          <TableCell>{stockData ? stockData.totalStock : "N/A"}</TableCell>
+          <TableCell>{row.sold || "N/A"}</TableCell>
+          <TableCell>{stockData ? stockData.genericName || "N/A" : "N/A"}</TableCell>
+          <TableCell>{stockData ? stockData.medicineManufacturerName || "N/A" : "N/A"}</TableCell>
         </TableRow>
-      )}
-    </TableBody>
+      );
+    })
+  ) : (
+    <TableRow>
+      <TableCell colSpan={headers.length} style={{ textAlign: "center" }}>
+        No data available for the selected date range.
+      </TableCell>
+    </TableRow>
+  )}
+</TableBody>
+
   </Table>
 </div>
 
