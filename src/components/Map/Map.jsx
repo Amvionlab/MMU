@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import L from 'leaflet';
@@ -10,58 +12,42 @@ const ambulanceIcon = new L.Icon({
   iconAnchor: [20, 40],
   popupAnchor: [0, -40],
 });
- 
+
 const Map = () => {
   const [vehicles, setVehicles] = useState([]);
   const [currentLocation, setCurrentLocation] = useState([15, 80]); // Default map center
   const { mmu } = useParams();
+
   useEffect(() => {
-    
     const fetchData = async () => {
       try {
-        let storedData = '';
-        storedData = localStorage.getItem('vehicles');
-          console.log(storedData)
-          if (storedData) {
-            setVehicles(JSON.parse(storedData));
-          }
+        let storedData = localStorage.getItem('vehicles');
+        if (storedData) {
+          setVehicles(JSON.parse(storedData));
+        }
+
         const response = await fetch('https://app.gpstrack.in/api/get_current_data?token=projectmmu_7jkITDLjgki2HoR1OLtwqpcHSXPQs6Kz&email=projectmmu@ircstnb.org');
-        
         if (response.ok) {
           const data = await response.json();
-         
-           // Store fetched data in localStorage
-         if(data.response != -1){
-          setVehicles(data);
- 
-         
-          localStorage.setItem('vehicles', JSON.stringify(data));
-         }
-        } else {
-          const storedData = localStorage.getItem('vehicles');
-          console.log(storageData)
-          if (storedData) {
-            setVehicles(JSON.parse(storedData));
+          if(data.response !== -1) {
+            setVehicles(data);
+            localStorage.setItem('vehicles', JSON.stringify(data));
           }
-          throw new Error('Failed to fetch new data, fallback to localStorage');
-         
-        }
+        } 
       } catch (error) {
         console.error('Error fetching data from API:', error);
- 
-        // Fallback to localStorage data
         const storedData = localStorage.getItem('vehicles');
         if (storedData) {
           setVehicles(JSON.parse(storedData));
         }
       }
     };
- 
+
     fetchData();
     const interval = setInterval(fetchData, 35000); // Fetch data every 35 seconds
- 
     return () => clearInterval(interval);
   }, []);
+
   const mmuToRegNoMap = {
     1: "TC 2131 - KANIYAKUMARI", 
     2: "TC0789 KRISHNAGIRI ",
@@ -73,41 +59,58 @@ const Map = () => {
   };
 
   const regNoToShow = mmuToRegNoMap[mmu];
-
   const filteredVehicles = vehicles.filter(vehicle => vehicle.regNo === regNoToShow);
+  const polylinePositions = filteredVehicles.length ? filteredVehicles.map(vehicle => [vehicle.latitude, vehicle.longitude]) : [];
 
-  const polylinePositions = filteredVehicles.length ? filteredVehicles.map((vehicle) => [vehicle.latitude, vehicle.longitude]) : [];
-
- 
- 
   return (
-    <div className='p-0.5'>
-      <MapContainer center={currentLocation} zoom={6} style={{ height: '625px', width: '100%' }}>
+    <div style={{ display: 'flex' }} className="h-full">
+     
+      <div style={{ width: '75%' }}>
+        <MapContainer center={currentLocation} zoom={6} style={{ height: '100%', width: '100%' }}>
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
- 
-        {filteredVehicles.length > 0 && filteredVehicles.map((vehicle) => (
-          <Marker
-            key={vehicle.deviceId}
-            position={[vehicle.latitude, vehicle.longitude]}
-            icon={ambulanceIcon}
-          >
-            <Popup>
-              <div>
-                <h3>{vehicle.regNo}</h3>
-                <p>{vehicle.address}</p>
-                <p>Status: {vehicle.vehicleStatus}</p>
-                <p>Speed: {vehicle.speed} km/h</p>
-                <p>Fuel: {vehicle.fuelLitre} litres</p>
-                <p>Distance Traveled : {vehicle.odoDistance} km</p>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
- 
-        {vehicles.length > 0 && <Polyline positions={polylinePositions} color="black" />}
-      </MapContainer>
-    </div>
-  );
+
+{filteredVehicles.length > 0 && filteredVehicles.map((vehicle) => (
+  <Marker
+    key={vehicle.deviceId}
+    position={[vehicle.latitude, vehicle.longitude]}
+    icon={ambulanceIcon}
+  >
+    <Popup autoClose={false} closeOnClick={false}>
+      <div>
+        <h3>{vehicle.regNo}</h3>
+        <p>{vehicle.address}</p>
+        <p>Status: {vehicle.vehicleStatus}</p>
+        <p>Speed: {vehicle.speed} km/h</p>
+        <p>Fuel: {vehicle.fuelLitre} litres</p>
+        <p>Distance Traveled: {vehicle.odoDistance} km</p>
+      </div>
+    </Popup>
+  </Marker>
+))}
+
+{vehicles.length > 0 && <Polyline positions={polylinePositions} color="black" />}
+</MapContainer>
+</div>
+<div style={{ width: '25%', padding: '10px', overflowY: 'auto', borderRight: '1px solid #ccc' }}>
+        <h2>Vehicle Details</h2>
+        {filteredVehicles.length > 0 ? (
+          filteredVehicles.map(vehicle => (
+            <div key={vehicle.deviceId} style={{ marginBottom: '15px', backgroundColor: '#f9f9f9', borderRadius: '5px', padding: '10px', boxShadow: '0 0 5px rgba(0,0,0,0.1)' }}>
+              <h3>{vehicle.regNo}</h3>
+              <p>{vehicle.address}</p>
+              <p>Status: {vehicle.vehicleStatus}</p>
+              <p>Speed: {vehicle.speed} km/h</p>
+              <p>Fuel: {vehicle.fuelLitre} litres</p>
+              <p>Distance Traveled: {vehicle.odoDistance} km</p>
+            </div>
+          ))
+        ) : (
+          <p>No vehicles found.</p>
+        )}
+      </div>
+
+</div>
+);
 };
- 
+
 export default Map;
