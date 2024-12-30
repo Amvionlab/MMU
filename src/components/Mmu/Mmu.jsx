@@ -40,13 +40,43 @@ function MMU() {
     });
   }, [url, payload]);
 
+  let content;
+
+  switch (mmu) {
+    case "1":
+      content = <p>KaniyaKumari</p>;
+      break;
+    case "2":
+      content = <p>Krishnagiri</p>;
+      break;
+    case "3":
+      content = <p>Nilgiris</p>;
+      break;
+    case "4":
+      content = <p>Tenkasi</p>;
+      break;
+    case "5":
+      content = <p>Tirunelveli</p>;
+      break;
+    case "6":
+      content = <p>Tuticorin</p>;
+      break;
+    case "7":
+      content = <p>Virudhunagar</p>;
+      break;
+    default:
+      content = <p>Dashboard Not defined</p>;
+  }
+
+
+
   return (
     <main className="p-0.5 bg-second h-full">
       <div className="bg-box p-2 mb-0.5 h-[12%]">
-        <h2 className="flex text-prime gap-4 items-center text-xl font-bold mt-4">
-          <MdSpaceDashboard size={24} />
-          MMU-{mmu} Dashboard
-        </h2>
+      <h2 className="flex text-prime gap-4 items-center text-xl font-bold mt-4">
+      <MdSpaceDashboard size={24} />
+      <p className="flex gap-2 items-center">{content} Dashboard</p> 
+    </h2>
       </div>
 
       <div className="h-[88%] bg-box p-4 flex justify-center items-center">

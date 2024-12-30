@@ -63,9 +63,9 @@ const Map = () => {
   const polylinePositions = filteredVehicles.length ? filteredVehicles.map(vehicle => [vehicle.latitude, vehicle.longitude]) : [];
 
   return (
-    <div style={{ display: 'flex' }} className="h-full">
+    <div style={{ display: 'flex' }} className="h-full font-poppins">
      
-      <div style={{ width: '75%' }}>
+      <div style={{ width: '70%' }}>
         <MapContainer center={currentLocation} zoom={6} style={{ height: '100%', width: '100%' }}>
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
@@ -91,24 +91,26 @@ const Map = () => {
 {vehicles.length > 0 && <Polyline positions={polylinePositions} color="black" />}
 </MapContainer>
 </div>
-<div style={{ width: '25%', padding: '10px', overflowY: 'auto', borderRight: '1px solid #ccc' }}>
-        <h2>Vehicle Details</h2>
+<div style={{ width: '30%', padding: '10px', overflowY: 'auto', borderRight: '1px solid #ccc' }} className='bg-white '>
+  <div className=''>
+        <h2 className='text-2xl font-bold text-prime mt-10'>Vehicle Details</h2>
         {filteredVehicles.length > 0 ? (
           filteredVehicles.map(vehicle => (
-            <div key={vehicle.deviceId} style={{ marginBottom: '15px', backgroundColor: '#f9f9f9', borderRadius: '5px', padding: '10px', boxShadow: '0 0 5px rgba(0,0,0,0.1)' }}>
-              <h3>{vehicle.regNo}</h3>
-              <p>{vehicle.address}</p>
-              <p>Status: {vehicle.vehicleStatus}</p>
-              <p>Speed: {vehicle.speed} km/h</p>
-              <p>Fuel: {vehicle.fuelLitre} litres</p>
-              <p>Distance Traveled: {vehicle.odoDistance} km</p>
+            <div key={vehicle.deviceId} style={{ marginBottom: '15px', borderRadius: '5px', padding: '10px' }} className='leading-8 ml-4'>
+            
+              <div className='mt-4 font-bold text-xl'> <h3>{vehicle.regNo}</h3></div>
+              <div className='mt-4'> <p><strong className='text-prime'>Address:</strong> <br />{vehicle.address}</p></div>
+              <div className='mt-4'> <p><strong className='text-prime'>Status:</strong> <br /> {vehicle.vehicleStatus}</p></div>
+              <div className='mt-4'> <p><strong className='text-prime'>Speed:</strong> <br /> {vehicle.speed} km/h</p></div>
+              <div className='mt-4'> <p><strong className='text-prime'>Fuel:</strong> <br /> {vehicle.fuelLitre} litres</p></div>
+              <div className='mt-4'> <p><strong className='text-prime'>Distance Traveled:</strong> <br />   {vehicle.odoDistance} km</p></div>
             </div>
           ))
         ) : (
           <p>No vehicles found.</p>
         )}
       </div>
-
+      </div>
 </div>
 );
 };
