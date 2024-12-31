@@ -93,17 +93,17 @@ const Map = () => {
 </div>
 <div style={{ width: '30%', padding: '10px', overflowY: 'auto', borderRight: '1px solid #ccc' }} className='bg-white '>
   <div className=''>
-        <h2 className='text-2xl font-bold text-prime mt-10'>Vehicle Details</h2>
+        <h2 className='text-2xl font-bold text-prime mt-5'>Vehicle Details</h2>
         {filteredVehicles.length > 0 ? (
           filteredVehicles.map(vehicle => (
             <div key={vehicle.deviceId} style={{ marginBottom: '15px', borderRadius: '5px', padding: '10px' }} className='leading-8 ml-4'>
             
-              <div className='mt-4 font-bold text-xl'> <h3>{vehicle.regNo}</h3></div>
-              <div className='mt-4'> <p><strong className='text-prime'>Address:</strong> <br />{vehicle.address}</p></div>
-              <div className='mt-4'> <p><strong className='text-prime'>Status:</strong> <br /> {vehicle.vehicleStatus}</p></div>
-              <div className='mt-4'> <p><strong className='text-prime'>Speed:</strong> <br /> {vehicle.speed} km/h</p></div>
-              <div className='mt-4'> <p><strong className='text-prime'>Fuel:</strong> <br /> {vehicle.fuelLitre} litres</p></div>
-              <div className='mt-4'> <p><strong className='text-prime'>Distance Traveled:</strong> <br />   {vehicle.odoDistance} km</p></div>
+              <div className='mt-2 font-bold text-xl'> <h3>{vehicle.regNo}</h3></div>
+              <div className='mt-2'> <p><strong className='text-prime'>Address:</strong> <br />{vehicle.address}</p></div>
+              <div className='mt-2'> <p><strong className='text-prime'>Status:</strong> <br /> {vehicle.vehicleStatus}</p></div>
+              <div className='mt-2'> <p><strong className='text-prime'>Speed:</strong> <br /> {vehicle.speed} km/h</p></div>
+              <div className='mt-2'> <p><strong className='text-prime'>Fuel:</strong> <br /> {vehicle.fuelLitre} litres</p></div>
+              <div className='mt-2'> <p><strong className='text-prime'>Distance Traveled:</strong> <br />   {vehicle.odoDistance} km</p></div>
             </div>
           ))
         ) : (
