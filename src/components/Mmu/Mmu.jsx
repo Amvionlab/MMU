@@ -44,7 +44,7 @@ function MMU() {
 
   switch (mmu) {
     case "1":
-      content = <p>KaniyaKumari</p>;
+      content = <p>Kanniyakumari</p>;
       break;
     case "2":
       content = <p>Krishnagiri</p>;
@@ -114,7 +114,8 @@ function MMU() {
 
           {isModalOpen && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-              <div className="bg-white px-8 py-2 rounded-lg shadow-lg h-[40%] ">
+              <div class="bg-white px-8 py-4 rounded-lg shadow-lg flex h-[75%] w-[80%]">
+             <div class="w-1/2 flex flex-col justify-center items-center border-r border-gray-300 px-4">
                 <button className="text-white bg-red-500 rounded-full h-6 w-6 font-semibold hover:font-bold mb-4" onClick={() => setIsModalOpen(false)}>
                   X
                 </button>
@@ -124,6 +125,8 @@ function MMU() {
                 />
                 <p className="mt-4 text-center">Scan to get the app</p>
               </div>
+              <div class="w-1/2 flex flex-col justify-start px-6 overflow-y-auto"><h3 class="font-semibold text-lg mb-4">Step-by-Step Instructions for DMSS Application Setup</h3><ol class="list-decimal list-inside text-sm space-y-2"><li><strong>Scan the QR Code or Download the DMSS Application:</strong><ul class="list-disc list-inside ml-4"><li>Open the Google Play Store on your mobile device.</li><li>Search for "DMSS" and download the application.</li><li>Alternatively, scan the QR code provided to directly access the download page.</li></ul></li><li><strong>Sign Up with Your Mobile Number:</strong><ul class="list-disc list-inside ml-4"><li>Open the DMSS app after installation.</li><li>Select "Sign Up" and enter your mobile number to create an account.</li><li>Follow the on-screen instructions to complete the sign-up process.</li></ul></li><li><strong>Send Your Mobile Number to the IRCSTNB IT Team:</strong><ul class="list-disc list-inside ml-4"><li>Once registered, share the same mobile number used for sign-up with the IRCSTNB IT Team for further configuration.</li></ul></li></ol><p class="mt-4 text-sm"><strong>For Assistance:</strong> If you encounter any issues, please contact the IT Team at <a href="mailto:itsupport@ircstnb.org" class="text-blue-500">itsupport@ircstnb.org</a>.</p></div>
+           </div>
             </div>
           )}
         </div>

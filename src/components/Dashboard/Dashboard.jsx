@@ -9,7 +9,7 @@ function Dashboard() {
       id: 1,
       unit: "Medical Unit 1",
       doctorName: "Dr. Smith",
-      location: "Kanyakumari",
+      location: "Kanniyakumari",
     },
     {
       title: "MU - 2",
