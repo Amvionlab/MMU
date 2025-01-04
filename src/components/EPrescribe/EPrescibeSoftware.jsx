@@ -24,7 +24,7 @@ function EPrescribeSoftware() {
 
   switch (mmu) {
     case "1":
-      content = <p>KaniyaKumari</p>;
+      content = <p>Kanniyakumari</p>;
       break;
     case "2":
       content = <p>Krishnagiri</p>;

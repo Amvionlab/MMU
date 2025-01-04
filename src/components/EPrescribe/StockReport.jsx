@@ -53,6 +53,7 @@ const StockReport = () => {
         TenantId: "155df572-7df7-4d98-8f2d-08dd1f702ff1",
         BranchId: "2c1fdf05-7f1b-473e-9875-2545023d53ed", 
       };
+      console.log(payload)
       
       try {
         const response = await fetch(url, {
