@@ -99,10 +99,10 @@ const Map = () => {
             <div key={vehicle.deviceId} style={{ marginBottom: '15px', borderRadius: '5px', padding: '10px' }} className='leading-8 ml-4'>
             
               <div className='mt-4 font-bold text-xl'> <h3>{vehicle.regNo}</h3></div>
-              <div className='mt-4'> <p><strong className='text-prime'>Address:</strong> <br />{vehicle.address}</p></div>
+              <div className='mt-4'> <p><strong className='text-prime'>Current Location:</strong> <br />{vehicle.address}</p></div>
               <div className='mt-4'> <p><strong className='text-prime'>Status:</strong> <br /> {vehicle.vehicleStatus}</p></div>
               <div className='mt-4'> <p><strong className='text-prime'>Speed:</strong> <br /> {vehicle.speed} km/h</p></div>
-              <div className='mt-4'> <p><strong className='text-prime'>Fuel:</strong> <br /> {vehicle.fuelLitre} litres</p></div>
+              <div className='mt-4'> <p><strong className='text-prime'>Ignition Status:</strong> <br /> {vehicle.ignitionStatus}</p></div>
               <div className='mt-4'> <p><strong className='text-prime'>Distance Traveled:</strong> <br />   {vehicle.odoDistance} km</p></div>
             </div>
           ))

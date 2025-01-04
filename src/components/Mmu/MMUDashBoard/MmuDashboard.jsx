@@ -16,14 +16,12 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 
 const headers = [
-  "id",
-  "employee_id",
-  "employee_name",
-  "check_in_time",
-  "check_out_time",
-  "total_hours",
-  "date",
-  "department",
+ 
+  "Employee Code",
+  "Log Date Time",
+  "Download Date Time",
+  "Direction",
+ 
 ];
 
 function MmuDashboard() {
@@ -34,11 +32,11 @@ function MmuDashboard() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const { mmu } = useParams(); 
   const { allData } = useFetch(`${baseURL}/backend/fetchbio.php`);
-
+  console.log(filteredData);
   useEffect(() => {
     if (date.endDate || date.fromDate) {
       const filter = allData.filter((data) => {
-        const dataDate = data.date;
+        const dataDate = data.LogDateTime;
         const start = date.fromDate || "1900-01-01";
         const end = date.endDate || "2100-01-01";
         return dataDate >= start && dataDate <= end;
