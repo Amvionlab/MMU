@@ -138,108 +138,109 @@ function MmuDashboard() {
   const exportToCSV = () => {
     const csvRows = [];
     csvRows.push(headers.join(",")); // Add the header row to CSV
-  
+
     const headerMap = {
-      "Employee Code": "EmployeeCode",
-      "Employee Name": "Name",
-      "Designation": "Designation",
-      "Log In Time": "LogDateTime",
-      "Log Out Time": "DownLoadDateTime",
-      "Total Time": "TotalTime",
- 
+        "Employee Code": "EmployeeCode",
+        "Employee Name": "Name",
+        "Designation": "Designation",
+        "Log In Time": "LogInTime",
+        "Log Out Time": "LogOutTime",
+        "Total Time": "TotalTime",
     };
-  
+
     // Map the filtered data to the CSV format
     filteredData.forEach(row => {
-      const values = headers.map(header => {
-        const key = headerMap[header];
-        const value = row[key] !== undefined ? row[key] : ""; // Create value or empty
-        return `"${value.replace(/"/g, '""')}"`; // Escape double quotes
-      });
-      csvRows.push(values.join(",")); // Join values into a row
+        const values = headers.map(header => {
+            const key = headerMap[header];
+            const value = row[key] !== undefined ? row[key] : ""; // Create value or empty
+            return `"${value.replace(/"/g, '""')}"`; // Escape double quotes
+        });
+        csvRows.push(values.join(",")); // Join values into a row
     });
-  
+
     // Create a Blob and download if there is at least one row
     if (csvRows.length > 1) { 
-      const blob = new Blob([csvRows.join("\n")], { type: "text/csv" });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.setAttribute("href", url);
-      a.setAttribute("download", "table_data.csv");
-      document.body.appendChild(a); // Append to body for Firefox
-      a.click();
-      document.body.removeChild(a); // Remove after triggering download
+        const blob = new Blob([csvRows.join("\n")], { type: "text/csv" });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.setAttribute("href", url);
+        a.setAttribute("download", "table_data.csv");
+        document.body.appendChild(a); // Append to body for Firefox
+        a.click();
+        document.body.removeChild(a); // Remove after triggering download
     } else {
-      alert("No valid data available for export.");
+        alert("No valid data available for export.");
     }
-  };
+};
 
-  const downloadPDF = () => {
-    const doc = new jsPDF();
-    doc.text("Table Data", 14, 10);
-  
-    const headerMap = {
+
+const downloadPDF = () => {
+  const doc = new jsPDF();
+  doc.text("Table Data", 14, 10);
+
+  const headerMap = {
       "Employee Code": "EmployeeCode",
       "Employee Name": "Name",
       "Designation": "Designation",
-      "Log Date Time": "LogDateTime",
-      "Download Date Time": "DownLoadDateTime",
+      "Log In Time": "LogInTime",
+      "Log Out Time": "LogOutTime",
       "Total Time": "TotalTime",
-      "Direction": "Direction"
-    };
-  
-    // Prepare valid data for PDF
-    const tableData = filteredData.map(row => 
-      headers.map(header => {
-        const key = headerMap[header];
-        return row[key] !== undefined ? row[key] : "";  // Use an empty string if undefined
-      })
-    );
-  
-    // Check if tableData has valid content
-    if (tableData.length > 0) {
-      doc.autoTable({
-        head: [headers], // Headers for the PDF
-        body: tableData,
-      });
-  
-      doc.save("table_data.pdf"); // Save the generated PDF
-    } else {
-      alert("No valid data available for download.");
-    }
   };
 
-  const printTable = () => {
-    const printContent = document.getElementById("table-content").innerHTML;
-    const newWindow = window.open("", "_blank", "width=800,height=600");
-    newWindow.document.open();
-    newWindow.document.write(`
+  // Prepare valid data for PDF
+  const tableData = filteredData.map(row => 
+      headers.map(header => {
+          const key = headerMap[header];
+          return row[key] !== undefined ? row[key] : "";  // Use an empty string if undefined
+      })
+  );
+
+  // Check if tableData has valid content
+  if (tableData.length > 0) {
+      doc.autoTable({
+          head: [headers], // Headers for the PDF
+          body: tableData,
+      });
+
+      doc.save("table_data.pdf"); // Save the generated PDF
+  } else {
+      alert("No valid data available for download.");
+  }
+};
+
+
+const printTable = () => {
+  const printContent = document.getElementById("table-content").innerHTML;
+  const newWindow = window.open("", "_blank", "width=800,height=600");
+  newWindow.document.open();
+  newWindow.document.write(`
       <html>
-        <head>
-          <title>Bio Metric - MMU ${mmu}</title>
-          <style>
-            table {
-              width: 100%;
-              border-collapse: collapse;
-            }
-            table, th, td {
-              border: 1px solid black;
-            }
-            th, td {
-              padding: 8px;
-              text-align: left;
-            }
-          </style>
-        </head>
-        <body>
-          <h1>Bio Metric - MMU ${mmu}</h1>
-          <table>${printContent}</table>
-        </body>
+          <head>
+              <title>Bio Metric - MMU ${mmu}</title>
+              <style>
+                  table {
+                      width: 100%;
+                      border-collapse: collapse;
+                  }
+                  table, th, td {
+                      border: 1px solid black;
+                  }
+                  th, td {
+                      padding: 8px;
+                      text-align: left;
+                  }
+              </style>
+          </head>
+          <body>
+              <h1>Bio Metric - MMU ${mmu}</h1>
+              <table>${printContent}</table>
+          </body>
       </html>
-    `);
-    newWindow.document.close();
-    newWindow.print();
-  };
+  `);
+  newWindow.document.close();
+  newWindow.print();
+};
+
 
   return (
     <div className="bg-second p-0.5">
