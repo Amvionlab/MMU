@@ -55,57 +55,106 @@ function MmuDashboard() {
   const processMerging = (allData, allEmployees, mmu) => {
     // Filter employees by Dist_No (mmu)
     const filteredEmployees = allEmployees.filter(emp => emp.dist_no === mmu);
-  
-    // Group the entries by EmployeeCode
+
+    // Helper function to format date
+    const formatDateTime = (date) => {
+        const pad = (n) => n.toString().padStart(2, '0');
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+    };
+
+    // Group the entries by EmployeeCode and date
     const groupedData = allData.reduce((acc, entry) => {
-      if (!acc[entry.EmployeeCode]) {
-        acc[entry.EmployeeCode] = [];
-      }
-      acc[entry.EmployeeCode].push(entry);
-      return acc;
-    }, {});
-  
-    // Map the grouped data to desired format
-    const mergedData = Object.keys(groupedData).map(empCode => {
-      const entries = groupedData[empCode];
-      const employee = filteredEmployees.find(emp => emp.emp_id === empCode);
-      let logInTime = null;
-      let logOutTime = null;
-  
-      // Iterate through the entries to get in and out times
-      entries.forEach(entry => {
-        const logDate = new Date(entry.LogDateTime);
-        const direction = entry.Direction;
-  
-        if (direction === 'in' && !logInTime) {
-          logInTime = logDate; // Set first "in" time
-        } else if (direction === 'out' && logInTime) {
-          logOutTime = logDate; // Set corresponding "out" time
+        const empCode = entry.EmployeeCode;
+        const logDate = new Date(entry.LogDateTime).toISOString().split('T')[0]; // Extract the date (YYYY-MM-DD)
+
+        if (!acc[empCode]) {
+            acc[empCode] = {};
         }
-      });
-  
-      // If both logInTime and logOutTime are found, calculate total time
-      let totalTime = null;
-      if (logInTime && logOutTime) {
-        const totalDuration = new Date(logOutTime - logInTime);
-        const hours = totalDuration.getUTCHours();
-        const minutes = totalDuration.getUTCMinutes();
-        const seconds = totalDuration.getUTCSeconds();
-        totalTime = `${hours}h ${minutes}m ${seconds}s`;
-      }
-  
-      return {
-        EmployeeCode: empCode,
-        LogInTime: logInTime ? logInTime.toLocaleString() : "N/A",
-        LogOutTime: logOutTime ? logOutTime.toLocaleString() : "N/A",
-        TotalTime: totalTime || "N/A",
-        Name: employee ? employee.name : "N/A",
-        Designation: employee ? employee.designation : "N/A",
-      };
-    }).filter(entry => entry.Name !== "N/A"); // Filter out entries with missing employee data
-  
+        if (!acc[empCode][logDate]) {
+            acc[empCode][logDate] = [];
+        }
+        acc[empCode][logDate].push(entry);
+
+        return acc;
+    }, {});
+
+    // Map the grouped data to desired format
+    const mergedData = Object.keys(groupedData).flatMap(empCode => {
+        const employeeDays = groupedData[empCode];
+        const employee = filteredEmployees.find(emp => emp.emp_id === empCode);
+
+        return Object.keys(employeeDays).map(date => {
+            const entries = employeeDays[date];
+
+            // Sort entries by LogDateTime to ensure chronological order
+            entries.sort((a, b) => new Date(a.LogDateTime) - new Date(b.LogDateTime));
+
+            let logInTime = null;
+            let logOutTime = null;
+            let totalTime = null;
+            const pairedEntries = [];
+
+            // Pair "in" and "out" times
+            entries.forEach(entry => {
+                const logDate = new Date(entry.LogDateTime);
+                if (entry.Direction === 'in') {
+                    if (!logInTime) {
+                        logInTime = logDate;
+                    }
+                } else if (entry.Direction === 'out') {
+                    if (logInTime && !logOutTime) {
+                        logOutTime = logDate;
+
+                        // Calculate total time for this pair
+                        const duration = new Date(logOutTime - logInTime);
+                        const hours = duration.getUTCHours();
+                        const minutes = duration.getUTCMinutes();
+                        const seconds = duration.getUTCSeconds();
+                        totalTime = `${hours}h ${minutes}m ${seconds}s`;
+
+                        // Store the paired entry
+                        pairedEntries.push({
+                            EmployeeCode: empCode,
+                            Date: date,
+                            LogInTime: formatDateTime(logInTime),
+                            LogOutTime: formatDateTime(logOutTime),
+                            TotalTime: totalTime,
+                            Name: employee ? employee.name : "N/A",
+                            Designation: employee ? employee.designation : "N/A",
+                        });
+
+                        // Reset logInTime and logOutTime for the next pair
+                        logInTime = null;
+                        logOutTime = null;
+                    }
+                }
+            });
+
+            // Add unmatched "in" times (if any)
+            if (logInTime && !logOutTime) {
+                pairedEntries.push({
+                    EmployeeCode: empCode,
+                    Date: date,
+                    LogInTime: formatDateTime(logInTime),
+                    LogOutTime: "N/A",
+                    TotalTime: "N/A",
+                    Name: employee ? employee.name : "N/A",
+                    Designation: employee ? employee.designation : "N/A",
+                });
+            }
+
+            return pairedEntries;
+        });
+    }).flat().filter(entry => entry.Name !== "N/A"); // Flatten and filter entries with missing employee data
+
+    // Sort merged data by Date
+    mergedData.sort((a, b) => new Date(a.Date) - new Date(b.Date));
+
     return mergedData;
-  };
+};
+
+
+
 
   const filterDataByDate = (data, date) => {
     const { fromDate, endDate } = date;
