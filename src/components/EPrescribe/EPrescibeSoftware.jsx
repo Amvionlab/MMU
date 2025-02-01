@@ -9,6 +9,7 @@ import {
 import MedicineReport from './MedicineReport';
 import StockReport from './StockReport';
 import PatientsReport from './PatientsReport';
+import { useNavigate } from 'react-router-dom';
 
 function EPrescribeSoftware() {
   const [activeReport, setActiveReport] = useState("medicine");
@@ -18,6 +19,12 @@ function EPrescribeSoftware() {
 
   const handleTabChange = (event, newValue) => {
     setActiveReport(newValue);
+  };
+
+  const navigate = useNavigate();
+
+  const handleApply = () => {
+      navigate(-1); // Navigate to the specified route
   };
 
   let content;
@@ -50,7 +57,8 @@ function EPrescribeSoftware() {
 
 
   return (
-    <Container className="bg-white w-full h-full p-4">
+    <section className='bg-white w-full h-full p-4'>
+    <Container className="">
          <span className='font-bold text-prime mt-4 text-xl font-poppins'>{content}</span>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={activeReport} onChange={handleTabChange}>
@@ -66,6 +74,10 @@ function EPrescribeSoftware() {
         {activeReport === "patients" && <PatientsReport />}
       </Box>
     </Container>
+    <div className="flex justify-end fixed bottom-6 right-6">
+  <button onClick={handleApply} className="bg-prime text-white px-4 py-1 rounded-sm ">Back</button>  
+  </div>
+    </section>
   );
 }
 

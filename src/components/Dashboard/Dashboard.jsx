@@ -5,53 +5,53 @@ import { RiDashboardHorizontalLine } from "react-icons/ri";
 function Dashboard() {
   const data = [
     {
-      title: "MU - 1",
+      title: "MMU - 1",
       id: 1,
       unit: "Medical Unit 1",
       doctorName: "Dr. Smith",
       location: "Kanniyakumari",
     },
     {
-      title: "MU - 2",
+      title: "MMU - 2",
       id: 2,
       unit: "Medical Unit 2",
       doctorName: "Dr. Johnson",
       location: "Krishnagiri",
     },
     {
-      title: "MU - 3",
+      title: "MMU - 3",
       id: 3,
-      unit: "Medical Unit 5",
+      unit: "Medical Unit 3",
       doctorName: "Dr. Jones",
       location: "Nilgiris",
       
     },
     {
-      title: "MU - 4",
+      title: "MMU - 4",
       id: 4,
-      unit: "Medical Unit 7",
+      unit: "Medical Unit 4",
       doctorName: "Dr. Wilson",
       location: "Tenkasi",
      
     },
     {
-      title: "MU - 5",
+      title: "MMU - 5",
       id: 5,
-      unit: "Medical Unit 3",
+      unit: "Medical Unit 5",
       doctorName: "Dr. Williams",
       location: "Tirunelveli",
     },
     {
-      title: "MU - 6",
+      title: "MMU - 6",
       id: 6,
-      unit: "Medical Unit 4",
+      unit: "Medical Unit 6",
       doctorName: "Dr. Brown",
       location: "Tuticorin",
     },
     {
-      title: "MU - 7",
+      title: "MMU - 7",
       id: 7,
-      unit: "Medical Unit 6",
+      unit: "Medical Unit 7",
       doctorName: "Dr. Davis",
       location: "Virudhunagar",
 

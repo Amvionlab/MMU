@@ -20,12 +20,7 @@ const headers = [
   "Age",
   "Gender",
   "Provisional Diagnosis",
-  "Investigations",
   "Final Diagnosis",
-  "Treatment",
-  "Result Cured / Same condition / Referred / Expired",
-  "Additional information if any",
-  "Initial of the Medical officer",
 ];
 
 
@@ -47,39 +42,64 @@ const PatientsReport = () => {
   const [patientsRowsPerPage, setPatientsRowsPerPage] = useState(10);
   const [searchPatientName, setSearchPatientName] = useState("");
   const [data, setData] = useState([]);
-  const today = new Date();
-  const { mmu } = useParams(); 
-  const initialFromDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - 1, today.getUTCDate(), 0, 0, 0));
-  const initialToDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), 23, 59, 59));
-  const selectedDistrictId = parseInt(mmu, 10);  // Convert `mmu` to an integer
+   const [page, setPage] = useState(0);
+   const [rowsPerPage, setRowsPerPage] = useState(10);
+   const today = new Date();
+  const formattedToday = today.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+  
+  const { mmu } = useParams();
+  const selectedDistrictId = parseInt(mmu, 10); // Convert `mmu` to an integer
 
-  const [fromDate, setFromDate] = useState(initialFromDate.toISOString().split('T')[0]);
-  const [toDate, setToDate] = useState(initialToDate.toISOString().split('T')[0]);
-
+  const [fromDate, setFromDate] = useState(formattedToday);
+  const [toDate, setToDate] = useState(formattedToday);
+  
   const url = "https://ez-hms-prod-app-ser.azurewebsites.net/api/MyReports/patientRegister";
 
 
+  const handleFromDateChange = (event) => {
+    const newFromDate = event.target.value;
+  
+    // Ensure FromDate is not later than ToDate
+    if (new Date(newFromDate) > new Date(toDate)) {
+      alert("From Date cannot be later than To Date.");
+      return;
+    }
+  
+    setFromDate(newFromDate);
+  };
+  
+  const handleToDateChange = (event) => {
+    const newToDate = event.target.value;
+  
+    // Ensure ToDate is not earlier than FromDate
+    if (new Date(newToDate) < new Date(fromDate)) {
+      alert("To Date cannot be earlier than From Date.");
+      return;
+    }
+  
+    setToDate(newToDate);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
+  
+  
       const formattedFromDate = new Date(fromDate);
       const formattedToDate = new Date(toDate);
   
-      formattedFromDate.setUTCHours(18, 30, 0, 0);  // Setting FromDate at 18:30:00 UTC
-      formattedToDate.setUTCHours(18, 29, 59, 999);  // Setting ToDate at 18:29:59 UTC
-  
-      // Log the district ID to make sure it's correct
-      console.log("Selected District ID:", selectedDistrictId);
+      // Adjust times for the start and end of the date range
+      formattedFromDate.setUTCHours(0, 0, 0, 0); // Start of the day
+      formattedToDate.setUTCHours(23, 59, 59, 999); // End of the day
   
       const payload = {
         FromDate: formattedFromDate.toISOString(),
         ToDate: formattedToDate.toISOString(),
         TenantId: "155df572-7df7-4d98-8f2d-08dd1f702ff1",
-        BranchId: "2c1fdf05-7f1b-473e-9875-2545023d53ed", 
-        DistrictId: district[selectedDistrictId],  // Use the district ID from URL
+        BranchId: "2c1fdf05-7f1b-473e-9875-2545023d53ed",
+        DistrictId: district[selectedDistrictId], // Get district ID from the URL
       };
   
       try {
-        console.log("Fetching data with payload:", payload);
         const response = await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -89,7 +109,7 @@ const PatientsReport = () => {
         if (!response.ok) throw new Error('Failed to fetch data');
   
         const result = await response.json();
-        console.log(result);
+        console.log("API Response:", result);
   
         const apiData = result.patientComplaints.map((complaint) => ({
           patientName: complaint.patreg.firstname || 'N/A',
@@ -99,18 +119,16 @@ const PatientsReport = () => {
           district: complaint.patreg.district || 'N/A',
           gender: complaint.patreg.gender || 'N/A',
           provisionalDiagnosis: complaint.complaint.name || 'N/A',
-          investigations: complaint.visit?.visitCode || 'N/A',
           finalDiagnosis: complaint.complaint.name || 'N/A',
-          treatment: 'N/A', // Placeholder, as no treatment data is available in the response
-          result: complaint.visit?.status || 'N/A',
-          additionalInfo: 'N/A', // Placeholder, as no additional info is available in the response
-          initialMO: 'N/A', // Placeholder, as no initialMO info is available in the response
         }));
-  
+      console.log("apidatea",apiData);
+        // Filter by district if needed
         const filteredPatients = apiData.filter(complaint =>
-          complaint.district && district[selectedDistrictId] && 
+          complaint.district &&
+          district[selectedDistrictId] &&
           complaint.district.toLowerCase() === district[selectedDistrictId].toLowerCase()
         );
+  
         setData(filteredPatients);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -118,8 +136,39 @@ const PatientsReport = () => {
     };
   
     fetchData();
-  }, [fromDate, toDate, selectedDistrictId]);  // Re-run the fetch when selectedDistrictId changes
+  }, [fromDate, toDate, selectedDistrictId]); // Re-run when dates or district ID change
+
+ 
   
+
+  let content;
+
+  switch (mmu) {
+    case "1":
+      content = <p>Kanniyakumari</p>;
+      break;
+    case "2":
+      content = <p>Krishnagiri</p>;
+      break;
+    case "3":
+      content = <p>Nilgiris</p>;
+      break;
+    case "4":
+      content = <p>Tenkasi</p>;
+      break;
+    case "5":
+      content = <p>Tirunelveli</p>;
+      break;
+    case "6":
+      content = <p>Tuticorin</p>;
+      break;
+    case "7":
+      content = <p>Virudhunagar</p>;
+      break;
+    default:
+      content = <p>Dashboard Not defined</p>;
+  }
+
   
   const exportToCSV = () => {
     const csvRows = [];
@@ -159,21 +208,29 @@ const PatientsReport = () => {
   
   
 
-  const filteredPatientsData = data.filter(item =>
-    item.patientName?.toLowerCase().includes(searchPatientName.toLowerCase())
+  const filteredPatientsData = data.filter((item) =>
+    // item.patientName?.toLowerCase().includes(searchPatientName.toLowerCase())
+  searchPatientName ? item.patientName.toLowerCase().includes(searchPatientName.toLowerCase()) : true
   );
-  
+  console.log(filteredPatientsData)
+  // const displayedPatientsData = filteredPatientsData.slice(
+  //   patientsPage * patientsRowsPerPage,
+  //   patientsPage * patientsRowsPerPage + patientsRowsPerPage
+  // );
+
   const displayedPatientsData = filteredPatientsData.slice(
     patientsPage * patientsRowsPerPage,
     patientsPage * patientsRowsPerPage + patientsRowsPerPage
   );
   
 
+  
+
   const downloadPDF = () => {
     const doc = new jsPDF();
   
     // Add a title to the document
-    doc.text("Patients Report", 14, 10);
+    doc.text(`Patients Report for ${content.props.children}`, 14, 10);
   
     // Define table data
     const tableData = displayedPatientsData.map((row) => [
@@ -228,7 +285,11 @@ const PatientsReport = () => {
             }
           </style>
         </head>
-        <body>${printContent}</body>
+        <body>
+        <h1>Patients Report for ${content.props.children}</h1>
+        ${printContent}
+        
+        </body>
       </html>
     `);
     newWindow.document.close();
@@ -252,24 +313,44 @@ const PatientsReport = () => {
           </div>
 
           <div className="flex items-center">
-            <label className="font-semibold text-red-600">From Date:</label>
-            <input
-              type="date"
-              value={fromDate}
-              onChange={e => setFromDate(e.target.value)}
-              className="border px-1 py-0.5 ml-2"
-            />
-          </div>
+  <label className="font-semibold text-red-600">From Date:</label>
+  <input
+    type="date"
+    value={fromDate}
+    onChange={(e) => {
+      const newFromDate = e.target.value;
+      setFromDate(newFromDate);
 
-          <div className="flex items-center">
-            <label className="font-semibold text-red-600">To Date:</label>
-            <input
-              type="date"
-              value={toDate}
-              onChange={e => setToDate(e.target.value)}
-              className="border px-1 py-0.5 ml-2"
-            />
-          </div>
+      // Adjust the min value of To Date to the selected From Date
+      if (new Date(newFromDate) > new Date(toDate)) {
+        setToDate(newFromDate);
+      }
+    }}
+    className="border px-1 py-0.5 ml-2"
+    max={toDate} // Prevent selecting From Date later than To Date
+  />
+</div>
+
+<div className="flex items-center">
+  <label className="font-semibold text-red-600">To Date:</label>
+  <input
+    type="date"
+    value={toDate}
+    onChange={(e) => {
+      const newToDate = e.target.value;
+      setToDate(newToDate);
+
+      // Adjust the max value of From Date to the selected To Date
+      if (new Date(newToDate) < new Date(fromDate)) {
+        setFromDate(newToDate);
+      }
+    }}
+    className="border px-1 py-0.5 ml-2"
+    min={fromDate} // Prevent selecting To Date earlier than From Date
+  />
+</div>
+
+
          
           <button
   onClick={exportToCSV}
@@ -346,31 +427,27 @@ const PatientsReport = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.length > 0 ? (
-            data.map((row, index) => (
-              <TableRow key={index}>
-                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.patientName}</TableCell>
-                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.registrationNumber}</TableCell>
-                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.contactNumber}</TableCell>
-                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.age}</TableCell>
-                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.gender}</TableCell>
-                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.provisionalDiagnosis}</TableCell>
-                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.investigations}</TableCell>
-                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.finalDiagnosis}</TableCell>
-                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.treatment}</TableCell>
-                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.result}</TableCell>
-                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.additionalInfo}</TableCell>
-                <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.initialMO}</TableCell>
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={7} style={{ textAlign: "center" }}>
-                No data available for the selected district.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
+  {displayedPatientsData.length > 0 ? (
+    displayedPatientsData.map((row, index) => (
+      <TableRow key={index}>
+        <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.patientName}</TableCell>
+        <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.registrationNumber}</TableCell>
+        <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.contactNumber}</TableCell>
+        <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.age}</TableCell>
+        <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.gender}</TableCell>
+        <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.provisionalDiagnosis}</TableCell>
+        <TableCell style={{ fontWeight: '400', fontSize: '12px', padding: '11px' }}>{row.finalDiagnosis}</TableCell>
+      </TableRow>
+    ))
+  ) : (
+    <TableRow>
+      <TableCell colSpan={7} style={{ textAlign: "center" }}>
+        No data available for the selected district.
+      </TableCell>
+    </TableRow>
+  )}
+</TableBody>
+
       </Table>
     </div>
     </div>

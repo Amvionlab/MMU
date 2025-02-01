@@ -15,7 +15,6 @@ import { useParams } from "react-router-dom";
 const headers = [
   "Medicine Name",
   "Category",
-  "Units",
   "Total Stock",
   "Sold",
   "Generic",
@@ -134,9 +133,45 @@ const StockReport = () => {
 
   const paginatedData = filteredStockData.slice(stockPage * stockRowsPerPage, (stockPage + 1) * stockRowsPerPage);
 
+  let content;
+
+  switch (mmu) {
+    case "1":
+      content = <p>Kanniyakumari</p>;
+      break;
+    case "2":
+      content = <p>Krishnagiri</p>;
+      break;
+    case "3":
+      content = <p>Nilgiris</p>;
+      break;
+    case "4":
+      content = <p>Tenkasi</p>;
+      break;
+    case "5":
+      content = <p>Tirunelveli</p>;
+      break;
+    case "6":
+      content = <p>Tuticorin</p>;
+      break;
+    case "7":
+      content = <p>Virudhunagar</p>;
+      break;
+    default:
+      content = <p>Dashboard Not defined</p>;
+  }
+
+
   const downloadPDF = () => {
     const doc = new jsPDF();
-    doc.text("Stock Report", 14, 10);
+
+    doc.text(`Stock report for ${content.props.children}`, 14, 10);
+
+    // Move the Y-coordinate to the next line
+    doc.setFontSize(10);
+    doc.text(`Printed date From ${fromDate} - To ${toDate}`, 14, 15);
+    
+    
     const tableData = filteredStockData.map((row) => {
       const stockData = currentStockDet.find(stock => stock.medicineName === row.medicineName);
       return [
@@ -155,6 +190,8 @@ const StockReport = () => {
       startY: 20
     });
     doc.save("stock_report.pdf");
+
+    
   };
 
   const printTable = () => {
@@ -179,7 +216,12 @@ const StockReport = () => {
             }
           </style>
         </head>
-        <body>${printContent}</body>
+        <body>
+        <h1>Stock Report for ${content.props.children}</h1>
+        <h4>From ${fromDate} - To ${toDate}</h4>
+        ${printContent}
+         
+        </body>
       </html>
     `);
     newWindow.document.close();
@@ -207,25 +249,44 @@ const StockReport = () => {
     <div className="bg-white h-full">
       <div className="flex items-center justify-between bg-box border-b text-xs">
         <div className="flex items-center space-x-4 bg-box">
-          <div className="flex items-center">
-            <label className="font-semibold text-red-600">From Date:</label>
-            <input
-              type="date"
-              value={fromDate}
-              onChange={e => setFromDate(e.target.value)}
-              className="border px-1 ml-2"
-            />
-          </div>
+        <div className="flex items-center">
+  <label className="font-semibold text-red-600">From Date:</label>
+  <input
+    type="date"
+    value={fromDate}
+    onChange={(e) => {
+      const newFromDate = e.target.value;
+      setFromDate(newFromDate);
 
-          <div className="flex items-center">
-            <label className="font-semibold text-red-600">To Date:</label>
-            <input
-              type="date"
-              value={toDate}
-              onChange={e => setToDate(e.target.value)}
-              className="border px-1 ml-2"
-            />
-          </div>
+      // Adjust the min value of To Date to the selected From Date
+      if (new Date(newFromDate) > new Date(toDate)) {
+        setToDate(newFromDate);
+      }
+    }}
+    className="border px-1 py-0.5 ml-2"
+    max={toDate} // Prevent selecting From Date later than To Date
+  />
+</div>
+
+<div className="flex items-center">
+  <label className="font-semibold text-red-600">To Date:</label>
+  <input
+    type="date"
+    value={toDate}
+    onChange={(e) => {
+      const newToDate = e.target.value;
+      setToDate(newToDate);
+
+      // Adjust the max value of From Date to the selected To Date
+      if (new Date(newToDate) < new Date(fromDate)) {
+        setFromDate(newToDate);
+      }
+    }}
+    className="border px-1 py-0.5 ml-2"
+    min={fromDate} // Prevent selecting To Date earlier than From Date
+  />
+</div>
+
           <div>
             <label className='text-prime'>Search Product:</label>
             <input
@@ -311,9 +372,9 @@ const StockReport = () => {
                     <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>
                       {row.category || "N/A"}
                     </TableCell>
-                    <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>
+                    {/* <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>
                       {row.unitsellprice || "N/A"}
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>
                       {stockData ? stockData.totalStock : "N/A"}
                     </TableCell>
