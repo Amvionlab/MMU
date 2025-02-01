@@ -21,6 +21,7 @@ const headers = [
   "Category",
   "Quantity",
   "Bill Date",
+  "Registration Number",
 ];
 
 const MedicineReport = () => {
@@ -31,11 +32,12 @@ const MedicineReport = () => {
   const [data, setData] = useState([]);
   const { mmu } = useParams();  
   const today = new Date();
-  const initialFromDate = new Date(today.setMonth(today.getMonth() - 1)); // One month back
+  const formattedToday = today.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+  const initialFromDate = new Date();; // One month back
   const initialToDate = new Date();
   
-  const [fromDate, setFromDate] = useState(initialFromDate.toISOString().split("T")[0]);
-  const [toDate, setToDate] = useState(initialToDate.toISOString().split("T")[0]);
+  const [fromDate, setFromDate] = useState(formattedToday);
+  const [toDate, setToDate] = useState(formattedToday);
   
   const url = "https://ez-hms-prod-app-ser.azurewebsites.net/api/MyReports/SalesProductwiseList";
 
@@ -52,46 +54,44 @@ const MedicineReport = () => {
   
   useEffect(() => {
     const fetchData = async () => {
-      // Ensure fromDate and toDate are formatted correctly with times
       const formattedFromDate = new Date(fromDate);
       const formattedToDate = new Date(toDate);
-    
-      // Set the desired time for FromDate and ToDate
-      formattedFromDate.setUTCHours(18, 30, 0, 0);  // FromDate at 18:30:00 UTC
-      formattedToDate.setUTCHours(18, 29, 59, 999);  // ToDate at 18:29:59 UTC
+  
+      // Set time range for the day
+      formattedFromDate.setUTCHours(0, 0, 0, 0); // Start of the day
+      formattedToDate.setUTCHours(23, 59, 59, 999); // End of the day
+  
       const payload = {
         FromDate: formattedFromDate.toISOString(),
         ToDate: formattedToDate.toISOString(),
         TenantId: "155df572-7df7-4d98-8f2d-08dd1f702ff1",
-        BranchId: "2c1fdf05-7f1b-473e-9875-2545023d53ed"  // Fixed BranchId for this request
+        BranchId: "2c1fdf05-7f1b-473e-9875-2545023d53ed", // Fixed BranchId for this request
       };
-
-      console.log("Payload being sent:", payload); // Log the payload for debugging
-    
+  
+     
+  
       try {
         const response = await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         });
-
+  
         if (!response.ok) throw new Error(`Failed to fetch data: ${response.statusText}`);
-
+  
         const contentType = response.headers.get("content-type");
-
         if (contentType && contentType.includes("application/json")) {
           const result = await response.json();
           const allData = result.details?.returnValue?.flat() || [];
-          console.log("Fetched data:", allData);
-        
-          // Filter based on locationId from the districtIdMap
+          
+  
           const locationId = districtIdMap[mmu];
-        
-          // Perform case-insensitive filtering based on locationId
-          const filteredData = allData.filter(item => 
+  
+          // Filter based on locationId
+          const filteredData = allData.filter(item =>
             item.locationId && item.locationId.toLowerCase() === locationId.toLowerCase()
           );
-        
+  
           setData(filteredData);
         } else {
           const text = await response.text();
@@ -102,9 +102,38 @@ const MedicineReport = () => {
         console.error("Error fetching data:", error);
       }
     };
-
+  
     fetchData();
-  }, [fromDate, toDate, mmu]); // Include mmu as a dependency to fetch data when mmu changes
+  }, [fromDate, toDate, mmu]);
+
+  let content;
+
+  switch (mmu) {
+    case "1":
+      content = <p>Kanniyakumari</p>;
+      break;
+    case "2":
+      content = <p>Krishnagiri</p>;
+      break;
+    case "3":
+      content = <p>Nilgiris</p>;
+      break;
+    case "4":
+      content = <p>Tenkasi</p>;
+      break;
+    case "5":
+      content = <p>Tirunelveli</p>;
+      break;
+    case "6":
+      content = <p>Tuticorin</p>;
+      break;
+    case "7":
+      content = <p>Virudhunagar</p>;
+      break;
+    default:
+      content = <p>Dashboard Not defined</p>;
+  }
+
 
   const filteredData = data.filter(row =>
     (selectedBranch ? row.branchName === selectedBranch : true) &&
@@ -126,11 +155,39 @@ const MedicineReport = () => {
     }).format(date);
   };
 
+  const exportToCSV = () => {
+    const csvRows = [];
+
+  
+    csvRows.push(headers.join(','));
+
+    // Add data rows
+    data.forEach(row => {
+      const values = [
+        row.patientName || "N/A",
+        row.doctorName || "N/A",
+        row.medicineName || "N/A",
+        row.medicineCategory || "N/A",
+        row.qty || "N/A",
+        formatBillDate(row.billDate),
+      ];
+      csvRows.push(values.map(value => `"${value}"`).join(','));
+    });
+
+    // Create a Blob from the CSV string
+    const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.setAttribute('href', url);
+    a.setAttribute('download', 'medicine_report.csv');
+    a.click();
+  };
+
   const downloadPDF = () => {
     const doc = new jsPDF();
   
     // Add a title to the document
-    doc.text("Medicine Report", 14, 10);
+    doc.text(`Medicine Report for ${content.props.children}`, 14, 10);
   
     // Format data to match autoTable's required structure
     const tableData = filteredData.map((row) => [
@@ -160,7 +217,7 @@ const MedicineReport = () => {
     newWindow.document.write(`
       <html>
         <head>
-          <title>Medicine Report - MMU ${mmu}</title>
+          <title>Medicine Report ${content.props.children}</title>
           <style>
             table {
               width: 100%;
@@ -175,7 +232,9 @@ const MedicineReport = () => {
             }
           </style>
         </head>
-        <body>${printContent}</body>
+        <body>
+        <h1>Medicine Report for ${content.props.children}</h1>
+        ${printContent}</body>
       </html>
     `);
     newWindow.document.close();
@@ -222,6 +281,18 @@ const MedicineReport = () => {
             />
           </div>
         </div>
+        
+        <button
+          onClick={exportToCSV}
+          className="flex justify-center items-center text-xs hover:shadow-md rounded-full border-red-200 border bg-second p-1 px-2 font-semibold relative group"
+        >
+          
+          <CiExport className="mr-1" /> 
+          <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 bg-black text-white text-xs rounded px-8 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            Export CSV
+          </span>
+        </button>
+
         <button onClick={downloadPDF} className="flex justify-center items-center text-xs hover:shadow-md rounded-full border-red-200 border bg-second p-1 px-2 font-semibold relative group">
           <AiFillFilePdf className="mr-1" />
           <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 bg-black text-white text-xs rounded px-8 py-1 opacity-0 group-hover:opacity-100 transition-opacity">Download PDF</span>
@@ -298,6 +369,9 @@ const MedicineReport = () => {
                   </TableCell>
                   <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px" }}>
                     {formatBillDate(row.billDate)}
+                  </TableCell>
+                  <TableCell style={{ fontWeight: "400", fontSize: "12px", padding: "10px 60px", }}>
+                    {row.regNumber}
                   </TableCell>
                 </TableRow>
               ))

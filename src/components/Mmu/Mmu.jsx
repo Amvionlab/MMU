@@ -5,6 +5,7 @@ import { BiCctv } from "react-icons/bi";
 import { FaFingerprint } from "react-icons/fa";
 import { MdOutlineGpsFixed, MdNoteAlt } from "react-icons/md";
 import QRCode from "react-qr-code"; // Importing QRCode from react-qr-code
+import { useNavigate } from 'react-router-dom';
 
 function MMU() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,6 +40,12 @@ function MMU() {
       console.error('There has been a problem with your fetch operation:', error);
     });
   }, [url, payload]);
+
+  const navigate = useNavigate();
+
+  const handleApply = () => {
+      navigate("/dashboard"); // Navigate to the specified route
+  };
 
   let content;
 
@@ -77,9 +84,16 @@ function MMU() {
       <MdSpaceDashboard size={24} />
       <p className="flex gap-2 items-center">{content} Dashboard</p> 
     </h2>
-      </div>
 
-      <div className="h-[88%] bg-box p-4 flex justify-center items-center">
+     
+
+      </div>
+<section className="h-[88%] bg-box p-4">
+  <div className="flex justify-end fixed bottom-6 right-6">
+  <button onClick={handleApply} className="bg-prime text-white px-4 py-1 rounded-sm ">Back</button>  
+  </div>
+      <div className=" mt-10 flex justify-center items-center ">
+      
         <div className="grid grid-cols-4 gap-4 w-full">
           <div onClick={() => setIsModalOpen(true)} className="bg-red-100 cursor-pointer flex justify-center items-center rounded-md shadow-md hover:bg-red-200 hover:shadow-xl h-full">
             <div className="text-center">
@@ -117,7 +131,7 @@ function MMU() {
             <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
               <div class="bg-white px-8 py-4 rounded-lg shadow-lg flex h-[75%] w-[80%]">
              <div class="w-1/2 flex flex-col justify-center items-center border-r border-gray-300 px-4">
-                <button className="text-white bg-red-500 rounded-full h-6 w-6 font-semibold hover:font-bold mb-4" onClick={() => setIsModalOpen(false)}>
+                <button className="text-white bg-red-500 rounded-full h-6 w-6 font-semibold hover:font-bold mb-4 absolute top-24 left-36" onClick={() => setIsModalOpen(false)}>
                   X
                 </button>
                 <QRCode
@@ -132,6 +146,7 @@ function MMU() {
           )}
         </div>
       </div>
+      </section>
     </main>
   );
 }
