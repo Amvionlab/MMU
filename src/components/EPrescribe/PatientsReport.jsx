@@ -80,7 +80,6 @@ const PatientsReport = () => {
         ToDate: formattedToDate.toISOString(),
         TenantId: "155df572-7df7-4d98-8f2d-08dd1f702ff1",
         BranchId: "2c1fdf05-7f1b-473e-9875-2545023d53ed",
-        DistrictId: district[selectedDistrictId],
       };
 
       try {
@@ -93,6 +92,7 @@ const PatientsReport = () => {
         if (!response.ok) throw new Error('Failed to fetch data');
 
         const result = await response.json();
+        console.log("a",result)
         const apiData = result.patientComplaints.map((complaint) => ({
           patientName: complaint.patreg.firstname || 'N/A',
           registrationNumber: complaint.patreg.regNum || 'N/A',
@@ -104,8 +104,14 @@ const PatientsReport = () => {
           finalDiagnosis: complaint.complaint.name || 'N/A',
         }));
 
-        setData(apiData);
-        setFilteredData(apiData);
+        // Filter data based on selected district ID
+        const districtId = district[selectedDistrictId].toLowerCase();
+        const filteredApiData = apiData.filter(item =>
+          item.district && item.district.toLowerCase() === districtId
+        );
+
+        setData(filteredApiData);
+        setFilteredData(filteredApiData);
 
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -200,7 +206,8 @@ const PatientsReport = () => {
         row.contactNumber || "N/A",
         row.age || "N/A",
         row.gender || "N/A",
-        ...otherData
+        row.provisionalDiagnosis || "N/A",
+        row.finalDiagnosis || "N/A",
       ];
       csvRows.push(rowData.join(","));
     });
@@ -223,6 +230,7 @@ const PatientsReport = () => {
             <label className="font-semibold text-red-600">Search Patient:</label>
             <input
               type="text"
+              value={searchPatientName}
               onChange={e => setSearchPatientName(e.target.value)}
               placeholder="Enter a patient name"
               className="border px-1 py-0.5 ml-2"
