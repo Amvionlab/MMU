@@ -93,7 +93,7 @@ const StockReport = () => {
         pharmacylocationId: pharmacyLocationId,
         pharmacyLocationName: pharmacyLocationName
       };
-
+     console.log(payload);
       try {
         const response = await fetch(url, {
           method: "POST",
@@ -108,6 +108,7 @@ const StockReport = () => {
         const contentType = response.headers.get("Content-Type");
         if (contentType && contentType.includes("application/json")) {
           const result = await response.json();
+          console.log("as",result);
           setSoldOutData(result.soldOutDet || []);
           setCurrentStockDet(result.currentStockDet || []);
         } else {

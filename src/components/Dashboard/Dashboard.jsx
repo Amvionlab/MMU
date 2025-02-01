@@ -8,51 +8,45 @@ function Dashboard() {
       title: "MU - 1",
       id: 1,
       unit: "Medical Unit 1",
-      doctorName: "Dr. Smith",
       location: "Kanniyakumari",
     },
     {
       title: "MU - 2",
       id: 2,
       unit: "Medical Unit 2",
-      doctorName: "Dr. Johnson",
       location: "Krishnagiri",
     },
     {
       title: "MU - 3",
       id: 3,
-      unit: "Medical Unit 5",
-      doctorName: "Dr. Jones",
+      unit: "Medical Unit 3",
       location: "Nilgiris",
       
     },
     {
       title: "MU - 4",
       id: 4,
-      unit: "Medical Unit 7",
-      doctorName: "Dr. Wilson",
+      unit: "Medical Unit 4",
       location: "Tenkasi",
      
     },
     {
       title: "MU - 5",
       id: 5,
-      unit: "Medical Unit 3",
-      doctorName: "Dr. Williams",
+      unit: "Medical Unit 5",
       location: "Tirunelveli",
     },
     {
       title: "MU - 6",
       id: 6,
-      unit: "Medical Unit 4",
-      doctorName: "Dr. Brown",
+      unit: "Medical Unit 6",
+      
       location: "Tuticorin",
     },
     {
       title: "MU - 7",
       id: 7,
-      unit: "Medical Unit 6",
-      doctorName: "Dr. Davis",
+      unit: "Medical Unit 7",
       location: "Virudhunagar",
 
     },
